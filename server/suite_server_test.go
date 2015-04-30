@@ -1,6 +1,7 @@
 package server_test
 
 import (
+	"bytes"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -40,6 +41,30 @@ func (s *ServerHarness) GET(uri string, data interface{}) (res *httptest.Respons
 	}
 
 	json.Unmarshal(body, &data)
+
+	return
+}
+
+func (s *ServerHarness) POST(uri string, postdata interface{}) (res *httptest.ResponseRecorder) {
+	data, err := json.Marshal(postdata)
+	if err != nil {
+		return
+	}
+
+	req, _ := http.NewRequest("POST", uri, bytes.NewBuffer(data))
+	req.Header.Set("Content-Type", "application/json")
+	res = httptest.NewRecorder()
+
+	s.container.ServeHTTP(res, req)
+
+	return
+}
+
+func (s *ServerHarness) DELETE(uri string) (res *httptest.ResponseRecorder) {
+	req, _ := http.NewRequest("DELETE", uri, nil)
+	res = httptest.NewRecorder()
+
+	s.container.ServeHTTP(res, req)
 
 	return
 }
