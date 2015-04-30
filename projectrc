@@ -1,0 +1,3 @@
+# set ur gopath
+export GOPATH=`cd ../../../..;pwd`:$(pwd)/_vendor
+echo "Updated gopath"
