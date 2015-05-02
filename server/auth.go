@@ -6,11 +6,13 @@ import (
 
 	"code.google.com/p/go-uuid/uuid"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/emicklei/go-restful"
 )
 
 type AuthResource struct {
-	sessions map[string]TokenResponse
+	signingKey []byte
+	sessions   map[string]jwt.Token
 }
 
 type TokenRequest struct {
@@ -27,8 +29,8 @@ type TokenResponse struct {
 	IdToken     string `json:"id_token"`
 }
 
-func RegisterAuth(c *restful.Container) *AuthResource {
-	h := &AuthResource{sessions: make(map[string]TokenResponse)}
+func RegisterAuth(c *restful.Container, signingKey []byte) *AuthResource {
+	h := &AuthResource{sessions: make(map[string]jwt.Token), signingKey: signingKey}
 	c.Filter(h.AuthorizationFilter)
 
 	ws := new(restful.WebService)
@@ -38,9 +40,9 @@ func RegisterAuth(c *restful.Container) *AuthResource {
 		Consumes(restful.MIME_XML, restful.MIME_JSON).
 		Produces(restful.MIME_XML, restful.MIME_JSON)
 
-	ws.Route(ws.POST("/token").To(h.createToken).
-		Doc("create a new access token").
-		Operation("createToken").
+	ws.Route(ws.POST("/token").To(h.createSession).
+		Doc("create a new session").
+		Operation("createSession").
 		Reads(TokenRequest{}).
 		Writes(""))
 
@@ -59,7 +61,8 @@ func (h *AuthResource) AuthorizationFilter(req *restful.Request, res *restful.Re
 	token := req.Request.Header.Get("Authorization")
 
 	if strings.HasPrefix(token, "Bearer ") {
-		if _, ok := h.sessions[token[7:]]; ok {
+		if t, ok := h.sessions[token[7:]]; ok {
+			req.SetAttribute("token", t)
 			chain.ProcessFilter(req, res)
 			return
 		}
@@ -69,22 +72,32 @@ func (h *AuthResource) AuthorizationFilter(req *restful.Request, res *restful.Re
 	res.WriteErrorString(http.StatusUnauthorized, http.StatusText(http.StatusUnauthorized))
 }
 
-func (h *AuthResource) createToken(req *restful.Request, res *restful.Response) {
+func (h *AuthResource) createSession(req *restful.Request, res *restful.Response) {
 	tr := new(TokenRequest)
 	req.ReadEntity(tr)
 
 	if tr.Username == "username" && tr.Password == "password" {
-		token := &TokenResponse{
-			AccessToken: "1234",
-			TokenType:   "Bearer",
-			ExpiresIn:   3600,
-			IdToken:     uuid.New(),
+		accessToken := uuid.New()
+		token := jwt.New(jwt.SigningMethodHS256)
+		token.Claims["sub"] = tr.Username
+		token.Claims["name"] = tr.Username
+		token.Claims["roles"] = []string{"admin", "shmurda"}
+		tokenString, err := token.SignedString(h.signingKey)
+		if err != nil {
+			res.WriteErrorString(500, err.Error())
 		}
 
-		h.sessions[token.IdToken] = *token
+		h.sessions[tokenString] = *token
+
+		response := TokenResponse{
+			AccessToken: accessToken,
+			TokenType:   "bearer",
+			ExpiresIn:   3600,
+			IdToken:     tokenString,
+		}
 
 		res.WriteHeader(http.StatusFound)
-		res.WriteEntity(token)
+		res.WriteEntity(response)
 	} else {
 		res.WriteErrorString(http.StatusBadRequest, http.StatusText(http.StatusBadRequest))
 	}

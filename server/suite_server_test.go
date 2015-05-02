@@ -23,7 +23,7 @@ func TestServer(t *testing.T) {
 
 type ServerHarness struct {
 	container *restful.Container
-	token     *server.TokenResponse
+	token     *string
 }
 
 func NewServerHarness(cfg *server.ServerConfig) *ServerHarness {
@@ -35,7 +35,7 @@ func (s *ServerHarness) request(verb, uri string, data io.Reader) *http.Request 
 	req, _ := http.NewRequest(verb, uri, data)
 
 	if s.token != nil {
-		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token.IdToken))
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", *s.token))
 	}
 
 	return req
@@ -55,10 +55,11 @@ func (s *ServerHarness) Authenticate(username, password string) error {
 		return err
 	}
 
-	token := new(server.TokenResponse)
-	json.Unmarshal(body, &token)
+	tr := new(server.TokenResponse)
 
-	s.token = token
+	json.Unmarshal(body, tr)
+
+	s.token = &tr.IdToken
 
 	return nil
 }
