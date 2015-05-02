@@ -18,6 +18,8 @@ func BuildContainer(cfg *ServerConfig) *restful.Container {
 	RegisterCompanies(c)
 	RegisterSwagger(c)
 
+	c.Filter(Authenticate)
+
 	return c
 }
 

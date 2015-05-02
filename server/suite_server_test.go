@@ -3,6 +3,7 @@ package server_test
 import (
 	"bytes"
 	"encoding/json"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -28,8 +29,14 @@ func NewServerHarness(cfg *server.ServerConfig) *ServerHarness {
 	return &ServerHarness{container: c}
 }
 
+func request(verb, uri string, data io.Reader) *http.Request {
+	req, _ := http.NewRequest(verb, uri, data)
+	req.Header.Set("Authorization", "Bearer 1234")
+	return req
+}
+
 func (s *ServerHarness) GET(uri string, data interface{}) (res *httptest.ResponseRecorder) {
-	req, _ := http.NewRequest("GET", uri, nil)
+	req := request("GET", uri, nil)
 	req.Header.Set("Accept", "application/json")
 	res = httptest.NewRecorder()
 
@@ -51,7 +58,7 @@ func (s *ServerHarness) POST(uri string, postdata interface{}) (res *httptest.Re
 		return
 	}
 
-	req, _ := http.NewRequest("POST", uri, bytes.NewBuffer(data))
+	req := request("POST", uri, bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
 	res = httptest.NewRecorder()
 
@@ -61,7 +68,7 @@ func (s *ServerHarness) POST(uri string, postdata interface{}) (res *httptest.Re
 }
 
 func (s *ServerHarness) DELETE(uri string) (res *httptest.ResponseRecorder) {
-	req, _ := http.NewRequest("DELETE", uri, nil)
+	req := request("DELETE", uri, nil)
 	res = httptest.NewRecorder()
 
 	s.container.ServeHTTP(res, req)
