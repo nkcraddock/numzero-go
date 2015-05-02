@@ -19,4 +19,10 @@ vendor:
 	go get -d code.google.com/p/go-uuid/uuid
 	find $(VENDOR_PATH) -type d -name '.git' | xargs rm -rf
 
+clean:
+	rm -rf build/
+
+build: clean
+	mkdir -p build/
+	CGO_ENABLED=0 go build -a -installsuffix cgo -o build/gooby --ldflags '-s' $(SERVER_FILES)
 
