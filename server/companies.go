@@ -8,15 +8,11 @@ import (
 )
 
 type CompanyResource struct {
-	Companies map[string]gooby.Company
+	store *gooby.Store
 }
 
 func RegisterCompanies(c *restful.Container) *CompanyResource {
-	h := &CompanyResource{
-		Companies: map[string]gooby.Company{
-			"Bloodhound Gang": gooby.Company{Name: "Bloodhound Gang"},
-		},
-	}
+	h := &CompanyResource{store: gooby.NewStore("Bloodhound Gang")}
 
 	ws := new(restful.WebService)
 
@@ -52,12 +48,7 @@ func RegisterCompanies(c *restful.Container) *CompanyResource {
 }
 
 func (h *CompanyResource) all(req *restful.Request, res *restful.Response) {
-	companies := make([]gooby.Company, len(h.Companies))
-	i := 0
-	for _, c := range h.Companies {
-		companies[i] = c
-		i += 1
-	}
+	companies := h.store.GetCompanies()
 	res.WriteEntity(companies)
 }
 
@@ -65,22 +56,21 @@ func (h *CompanyResource) create(req *restful.Request, res *restful.Response) {
 	c := new(gooby.Company)
 	req.ReadEntity(c)
 
-	h.Companies[c.Name] = *c
+	h.store.SaveCompany(c)
 	res.WriteHeader(http.StatusCreated)
 	res.WriteEntity(c)
 }
 
 func (h *CompanyResource) del(req *restful.Request, res *restful.Response) {
-	if _, ok := h.Companies[req.PathParameter("name")]; !ok {
+	if ok := h.store.DeleteCompany(req.PathParameter("name")); !ok {
 		res.WriteErrorString(http.StatusNotFound, http.StatusText(http.StatusNotFound))
 	} else {
-		delete(h.Companies, req.PathParameter("name"))
 		res.WriteHeader(http.StatusNoContent)
 	}
 }
 
 func (h *CompanyResource) get(req *restful.Request, res *restful.Response) {
-	if c, ok := h.Companies[req.PathParameter("name")]; ok {
+	if c, ok := h.store.GetCompany(req.PathParameter("name")); ok {
 		res.WriteEntity(c)
 	} else {
 		res.WriteErrorString(http.StatusNotFound, http.StatusText(http.StatusNotFound))
