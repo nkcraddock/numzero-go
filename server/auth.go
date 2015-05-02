@@ -51,6 +51,10 @@ func RegisterAuth(c *restful.Container, signingKey []byte) *AuthResource {
 	return h
 }
 
+var publicKeyFunc jwt.Keyfunc = func(t *jwt.Token) (interface{}, error) {
+	return PublicKey, nil
+}
+
 func (h *AuthResource) AuthorizationFilter(req *restful.Request, res *restful.Response, chain *restful.FilterChain) {
 	// auth/token is exempt
 	if req.SelectedRoutePath() == "/auth/token" {
@@ -58,13 +62,16 @@ func (h *AuthResource) AuthorizationFilter(req *restful.Request, res *restful.Re
 		return
 	}
 
-	token := req.Request.Header.Get("Authorization")
-
-	if strings.HasPrefix(token, "Bearer ") {
-		if t, ok := h.sessions[token[7:]]; ok {
-			req.SetAttribute("token", t)
-			chain.ProcessFilter(req, res)
-			return
+	bearer := req.Request.Header.Get("Authorization")
+	if strings.HasPrefix(bearer, "Bearer ") {
+		token, err := jwt.Parse(bearer[7:], publicKeyFunc)
+		if err == nil {
+			jti := token.Claims["jti"].(string)
+			if t, ok := h.sessions[jti]; ok {
+				req.SetAttribute("token", t)
+				chain.ProcessFilter(req, res)
+				return
+			}
 		}
 	}
 
@@ -77,8 +84,9 @@ func (h *AuthResource) createSession(req *restful.Request, res *restful.Response
 	req.ReadEntity(tr)
 
 	if tr.Username == "username" && tr.Password == "password" {
-		accessToken := uuid.New()
+		jti := uuid.New()
 		token := jwt.New(jwt.SigningMethodHS256)
+		token.Claims["jti"] = jti
 		token.Claims["sub"] = tr.Username
 		token.Claims["name"] = tr.Username
 		token.Claims["roles"] = []string{"admin", "shmurda"}
@@ -87,10 +95,10 @@ func (h *AuthResource) createSession(req *restful.Request, res *restful.Response
 			res.WriteErrorString(500, err.Error())
 		}
 
-		h.sessions[tokenString] = *token
+		h.sessions[jti] = *token
 
 		response := TokenResponse{
-			AccessToken: accessToken,
+			AccessToken: jti,
 			TokenType:   "bearer",
 			ExpiresIn:   3600,
 			IdToken:     tokenString,
