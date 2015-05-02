@@ -3,6 +3,7 @@ package server_test
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -22,6 +23,7 @@ func TestServer(t *testing.T) {
 
 type ServerHarness struct {
 	container *restful.Container
+	token     *server.TokenResponse
 }
 
 func NewServerHarness(cfg *server.ServerConfig) *ServerHarness {
@@ -29,14 +31,40 @@ func NewServerHarness(cfg *server.ServerConfig) *ServerHarness {
 	return &ServerHarness{container: c}
 }
 
-func request(verb, uri string, data io.Reader) *http.Request {
+func (s *ServerHarness) request(verb, uri string, data io.Reader) *http.Request {
 	req, _ := http.NewRequest(verb, uri, data)
-	req.Header.Set("Authorization", "Bearer 1234")
+
+	if s.token != nil {
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", s.token.IdToken))
+	}
+
 	return req
 }
 
+func (s *ServerHarness) Authenticate(username, password string) error {
+	req := &server.TokenRequest{
+		GrantType: "password",
+		Username:  "username",
+		Password:  "password",
+		ClientId:  "client_id",
+	}
+	res := s.POST("/auth/token", &req)
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	token := new(server.TokenResponse)
+	json.Unmarshal(body, &token)
+
+	s.token = token
+
+	return nil
+}
+
 func (s *ServerHarness) GET(uri string, data interface{}) (res *httptest.ResponseRecorder) {
-	req := request("GET", uri, nil)
+	req := s.request("GET", uri, nil)
 	req.Header.Set("Accept", "application/json")
 	res = httptest.NewRecorder()
 
@@ -58,8 +86,9 @@ func (s *ServerHarness) POST(uri string, postdata interface{}) (res *httptest.Re
 		return
 	}
 
-	req := request("POST", uri, bytes.NewBuffer(data))
+	req := s.request("POST", uri, bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
 	res = httptest.NewRecorder()
 
 	s.container.ServeHTTP(res, req)
@@ -68,7 +97,7 @@ func (s *ServerHarness) POST(uri string, postdata interface{}) (res *httptest.Re
 }
 
 func (s *ServerHarness) DELETE(uri string) (res *httptest.ResponseRecorder) {
-	req := request("DELETE", uri, nil)
+	req := s.request("DELETE", uri, nil)
 	res = httptest.NewRecorder()
 
 	s.container.ServeHTTP(res, req)

@@ -16,9 +16,8 @@ func BuildContainer(cfg *ServerConfig) *restful.Container {
 	c := restful.NewContainer()
 
 	RegisterCompanies(c)
+	RegisterAuth(c)
 	RegisterSwagger(c)
-
-	c.Filter(Authenticate)
 
 	return c
 }

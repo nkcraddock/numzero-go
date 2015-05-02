@@ -12,6 +12,7 @@ import (
 var _ = Describe("CompanyResource integration tests", func() {
 	cfg := &server.ServerConfig{}
 	server := NewServerHarness(cfg)
+	server.Authenticate("username", "password")
 
 	Context("GET /companies", func() {
 		It("retrieves a list of companies", func() {
