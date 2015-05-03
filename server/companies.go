@@ -11,10 +11,12 @@ type CompanyResource struct {
 	store gooby.Store
 }
 
-func RegisterCompanies(c *restful.Container, store gooby.Store) *CompanyResource {
+func RegisterCompanies(c *restful.Container, store gooby.Store, auth *AuthResource) *CompanyResource {
 	h := &CompanyResource{store: store}
 
 	ws := new(restful.WebService)
+
+	ws.Filter(auth.AuthorizationFilter)
 
 	ws.Path("/companies").
 		Doc("Manage companies").

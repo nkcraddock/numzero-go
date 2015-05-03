@@ -39,7 +39,6 @@ func RegisterAuth(c *restful.Container, store gooby.Store, signingKey, publicKey
 			return publicKey, nil
 		},
 	}
-	c.Filter(h.AuthorizationFilter)
 
 	ws := new(restful.WebService)
 
