@@ -1,0 +1,15 @@
+{
+  "name": "gooby-client",
+  "version": "1.0.0",
+  "homepage": "https://github.com/nkcraddock/gooby",
+  "authors": [
+    "Nathan Craddock <nkcraddock@gmail.com>"
+  ],
+  "description": "gooby client",
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "~3.3.4",
+    "modernizr": "~2.8.3",
+    "jquery": "~2.1.4"
+  }
+}

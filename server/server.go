@@ -38,12 +38,18 @@ func RegisterSwagger(container *restful.Container) {
 func RegisterStaticContent(container *restful.Container, root string) {
 	current, _ := os.Getwd()
 	staticRoot := path.Join(current, root)
+	notFound := path.Join(staticRoot, "404.html")
 	log.Println("Client root:", staticRoot)
 
 	var staticHandler = func(req *restful.Request, res *restful.Response) {
 		fullPath := path.Join(staticRoot, req.PathParameter("path"))
-		log.Println("Static resource:", fullPath)
-		http.ServeFile(res.ResponseWriter, req.Request, fullPath)
+		_, err := os.Stat(fullPath)
+		found := err == nil
+		if found {
+			http.ServeFile(res.ResponseWriter, req.Request, fullPath)
+		} else {
+			http.ServeFile(res.ResponseWriter, req.Request, notFound)
+		}
 	}
 
 	ws := new(restful.WebService)
