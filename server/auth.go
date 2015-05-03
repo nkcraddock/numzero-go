@@ -12,8 +12,9 @@ import (
 )
 
 type AuthResource struct {
-	signingKey []byte
-	store      *gooby.Store
+	signingKey    []byte
+	store         *gooby.Store
+	publicKeyFunc jwt.Keyfunc
 }
 
 type TokenRequest struct {
@@ -30,8 +31,14 @@ type TokenResponse struct {
 	IdToken     string `json:"id_token"`
 }
 
-func RegisterAuth(c *restful.Container, store *gooby.Store, signingKey []byte) *AuthResource {
-	h := &AuthResource{store: store, signingKey: signingKey}
+func RegisterAuth(c *restful.Container, store *gooby.Store, signingKey, publicKey []byte) *AuthResource {
+	h := &AuthResource{
+		store:      store,
+		signingKey: signingKey,
+		publicKeyFunc: func(t *jwt.Token) (interface{}, error) {
+			return publicKey, nil
+		},
+	}
 	c.Filter(h.AuthorizationFilter)
 
 	ws := new(restful.WebService)
@@ -52,10 +59,6 @@ func RegisterAuth(c *restful.Container, store *gooby.Store, signingKey []byte) *
 	return h
 }
 
-var publicKeyFunc jwt.Keyfunc = func(t *jwt.Token) (interface{}, error) {
-	return PublicKey, nil
-}
-
 func (h *AuthResource) AuthorizationFilter(req *restful.Request, res *restful.Response, chain *restful.FilterChain) {
 	// auth/token is exempt
 	if req.SelectedRoutePath() == "/auth/token" {
@@ -65,7 +68,7 @@ func (h *AuthResource) AuthorizationFilter(req *restful.Request, res *restful.Re
 
 	bearer := req.Request.Header.Get("Authorization")
 	if strings.HasPrefix(bearer, "Bearer ") {
-		token, err := jwt.Parse(bearer[7:], publicKeyFunc)
+		token, err := jwt.Parse(bearer[7:], h.publicKeyFunc)
 		if err == nil {
 			jti := token.Claims["jti"].(string)
 			if t, ok := h.store.GetSession(jti); ok {

@@ -57,5 +57,4 @@ func (s *Store) GetSession(id string) (*jwt.Token, bool) {
 
 func (s *Store) SaveSession(id string, token *jwt.Token) {
 	s.sessions[id] = *token
-
 }
