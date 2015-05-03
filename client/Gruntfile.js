@@ -86,12 +86,8 @@ module.exports = function(grunt) {
     },
     concat: {
       maincss: {
-        src: cfg.files.app.css,
+        src: [ cfg.files.app.css, cfg.files.vendor.css ],
         dest: cfg.build.path.css + 'app.css'
-      },
-      vendorcss: {
-        src: cfg.files.vendor.css, 
-        dest: cfg.build.path.css + 'vendor.css'
       }
     },
     browserify: {

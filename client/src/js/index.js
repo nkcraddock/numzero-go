@@ -5,8 +5,8 @@
   require('jquery') ;
   require('angular');
 
-
   // Load modules
+  require('./layout');
   require('./home');
   
   // Load app

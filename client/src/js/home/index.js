@@ -3,15 +3,19 @@
 
   var angular = require('angular');
 
-  var ngModule = angular.module('app.home', ['ui.router']);
+  var ngModule = angular.module('app.home', []);
 
   ngModule
     .config(function($stateProvider, $urlRouterProvider) {
       $stateProvider
-        .state('home', {
+        .state('app.home', {
           url: '/',
-          templateUrl: "home/home.html",
-          controller: 'HomeCtrl'
+          views: {
+            '@': {
+              templateUrl: "home/home.html",
+              controller: 'HomeCtrl'
+            }
+          }
         });
     })
     .controller('HomeCtrl', function($scope) {
