@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"net/http"
 	"os"
 	"path"
@@ -17,7 +18,7 @@ func BuildContainer(store gooby.Store, privateKey, publicKey []byte) *restful.Co
 	auth := RegisterAuth(c, store, privateKey, publicKey)
 	RegisterCompanies(c, store, auth)
 	RegisterSwagger(c)
-	RegisterStaticContent(c, "/client")
+	RegisterStaticContent(c, "/client/build")
 
 	return c
 }
@@ -37,11 +38,15 @@ func RegisterSwagger(container *restful.Container) {
 func RegisterStaticContent(container *restful.Container, root string) {
 	current, _ := os.Getwd()
 	staticRoot := path.Join(current, root)
-	ws := new(restful.WebService)
+	log.Println("Client root:", staticRoot)
+
 	var staticHandler = func(req *restful.Request, res *restful.Response) {
 		fullPath := path.Join(staticRoot, req.PathParameter("path"))
+		log.Println("Static resource:", fullPath)
 		http.ServeFile(res.ResponseWriter, req.Request, fullPath)
 	}
+
+	ws := new(restful.WebService)
 	ws.Route(ws.GET("/{path:*}").To(staticHandler))
 	container.Add(ws)
 }

@@ -3,6 +3,7 @@ GOPATH := $(VENDOR_PATH):$(GOPATH)
 SERVER_FILES := $(shell find cmd/server -type f -name "*.go" ! -name "*_test.go")
 
 run: 
+	grunt --gruntfile client/Gruntfile.js build
 	go run $(SERVER_FILES)
 
 test:
