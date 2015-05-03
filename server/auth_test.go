@@ -13,7 +13,7 @@ import (
 )
 
 var _ = Describe("AuthResource integration tests", func() {
-	store := gooby.NewStore("Bloodhound Gang", "Gang of Four")
+	store := gooby.NewMemoryStore("Bloodhound Gang", "Gang of Four")
 	s := NewServerHarness(store)
 
 	Context("POST /auth/token", func() {

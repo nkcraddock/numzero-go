@@ -9,7 +9,7 @@ import (
 )
 
 var _ = Describe("CompanyResource integration tests", func() {
-	store := gooby.NewStore("Bloodhound Gang", "Gang of Four")
+	store := gooby.NewMemoryStore("Bloodhound Gang", "Gang of Four")
 	server := NewServerHarness(store)
 	server.Authenticate("username", "password")
 

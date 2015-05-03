@@ -9,7 +9,7 @@ import (
 	"github.com/nkcraddock/gooby"
 )
 
-func BuildContainer(store *gooby.Store, privateKey, publicKey []byte) *restful.Container {
+func BuildContainer(store gooby.Store, privateKey, publicKey []byte) *restful.Container {
 	c := restful.NewContainer()
 
 	RegisterCompanies(c, store)

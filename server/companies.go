@@ -8,10 +8,10 @@ import (
 )
 
 type CompanyResource struct {
-	store *gooby.Store
+	store gooby.Store
 }
 
-func RegisterCompanies(c *restful.Container, store *gooby.Store) *CompanyResource {
+func RegisterCompanies(c *restful.Container, store gooby.Store) *CompanyResource {
 	h := &CompanyResource{store: store}
 
 	ws := new(restful.WebService)

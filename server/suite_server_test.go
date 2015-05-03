@@ -27,7 +27,7 @@ type ServerHarness struct {
 	token     *string
 }
 
-func NewServerHarness(store *gooby.Store) *ServerHarness {
+func NewServerHarness(store gooby.Store) *ServerHarness {
 	c := server.BuildContainer(store, privateKey, publicKey)
 	return &ServerHarness{container: c}
 }

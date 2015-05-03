@@ -13,7 +13,7 @@ import (
 
 type AuthResource struct {
 	signingKey    []byte
-	store         *gooby.Store
+	store         gooby.Store
 	publicKeyFunc jwt.Keyfunc
 }
 
@@ -31,7 +31,7 @@ type TokenResponse struct {
 	IdToken     string `json:"id_token"`
 }
 
-func RegisterAuth(c *restful.Container, store *gooby.Store, signingKey, publicKey []byte) *AuthResource {
+func RegisterAuth(c *restful.Container, store gooby.Store, signingKey, publicKey []byte) *AuthResource {
 	h := &AuthResource{
 		store:      store,
 		signingKey: signingKey,

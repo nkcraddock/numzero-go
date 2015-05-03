@@ -10,7 +10,7 @@ import (
 
 func main() {
 	addr := ":3001"
-	store := gooby.NewStore()
+	store := gooby.NewMemoryStore()
 	c := server.BuildContainer(store, privateKey, publicKey)
 
 	server := &http.Server{Addr: addr, Handler: c}
