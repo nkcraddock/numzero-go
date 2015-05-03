@@ -17,10 +17,10 @@ var _ = Describe("CompanyResource integration tests", func() {
 		It("retrieves a list of companies", func() {
 			companies := []gooby.Company{}
 			res := server.GET("/companies", &companies)
+			Ω(res.Code).Should(Equal(http.StatusOK))
 			Ω(companies).ShouldNot(BeEmpty())
 			Ω(companies).Should(HaveLen(2))
 			Ω(companies[0].Name).Should(Equal("Bloodhound Gang"))
-			Ω(res.Code).Should(Equal(http.StatusOK))
 		})
 	})
 

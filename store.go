@@ -1,11 +1,17 @@
 package gooby
 
+import "github.com/dgrijalva/jwt-go"
+
 type Store struct {
 	companies map[string]Company
+	sessions  map[string]jwt.Token
 }
 
 func NewStore(companies ...string) *Store {
-	s := &Store{companies: make(map[string]Company)}
+	s := &Store{
+		companies: make(map[string]Company),
+		sessions:  make(map[string]jwt.Token),
+	}
 	for _, c := range companies {
 		s.companies[c] = Company{Name: c}
 	}
@@ -39,4 +45,17 @@ func (s *Store) DeleteCompany(name string) bool {
 func (s *Store) GetCompany(name string) (c Company, ok bool) {
 	c, ok = s.companies[name]
 	return
+}
+
+func (s *Store) GetSession(id string) (*jwt.Token, bool) {
+	if token, ok := s.sessions[id]; ok {
+		return &token, ok
+	}
+
+	return nil, false
+}
+
+func (s *Store) SaveSession(id string, token *jwt.Token) {
+	s.sessions[id] = *token
+
 }

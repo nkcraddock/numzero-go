@@ -8,11 +8,12 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/emicklei/go-restful"
+	"github.com/nkcraddock/gooby"
 )
 
 type AuthResource struct {
 	signingKey []byte
-	sessions   map[string]jwt.Token
+	store      *gooby.Store
 }
 
 type TokenRequest struct {
@@ -29,8 +30,8 @@ type TokenResponse struct {
 	IdToken     string `json:"id_token"`
 }
 
-func RegisterAuth(c *restful.Container, signingKey []byte) *AuthResource {
-	h := &AuthResource{sessions: make(map[string]jwt.Token), signingKey: signingKey}
+func RegisterAuth(c *restful.Container, store *gooby.Store, signingKey []byte) *AuthResource {
+	h := &AuthResource{store: store, signingKey: signingKey}
 	c.Filter(h.AuthorizationFilter)
 
 	ws := new(restful.WebService)
@@ -67,7 +68,7 @@ func (h *AuthResource) AuthorizationFilter(req *restful.Request, res *restful.Re
 		token, err := jwt.Parse(bearer[7:], publicKeyFunc)
 		if err == nil {
 			jti := token.Claims["jti"].(string)
-			if t, ok := h.sessions[jti]; ok {
+			if t, ok := h.store.GetSession(jti); ok {
 				req.SetAttribute("token", t)
 				chain.ProcessFilter(req, res)
 				return
@@ -95,7 +96,7 @@ func (h *AuthResource) createSession(req *restful.Request, res *restful.Response
 			res.WriteErrorString(500, err.Error())
 		}
 
-		h.sessions[jti] = *token
+		h.store.SaveSession(jti, token)
 
 		response := TokenResponse{
 			AccessToken: jti,

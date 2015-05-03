@@ -13,7 +13,7 @@ func BuildContainer(store *gooby.Store) *restful.Container {
 	c := restful.NewContainer()
 
 	RegisterCompanies(c, store)
-	RegisterAuth(c, privateKey)
+	RegisterAuth(c, store, privateKey)
 	RegisterSwagger(c)
 
 	return c
