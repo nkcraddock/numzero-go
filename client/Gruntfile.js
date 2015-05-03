@@ -78,7 +78,10 @@ module.exports = function(grunt) {
     html2js: {
       main: {
         src: cfg.files.app.html,
-        dest: cfg.build.path.js + 'templates.js'
+        dest: cfg.build.path.js + 'templates.js',
+        options: {
+          base: "src/js"
+        }
       }
     },
     concat: {
