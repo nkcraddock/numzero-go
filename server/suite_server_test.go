@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/emicklei/go-restful"
+	"github.com/nkcraddock/gooby"
 	"github.com/nkcraddock/gooby/server"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -26,8 +27,8 @@ type ServerHarness struct {
 	token     *string
 }
 
-func NewServerHarness(cfg *server.ServerConfig) *ServerHarness {
-	c := server.BuildContainer(cfg)
+func NewServerHarness(store *gooby.Store) *ServerHarness {
+	c := server.BuildContainer(store)
 	return &ServerHarness{container: c}
 }
 

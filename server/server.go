@@ -6,16 +6,13 @@ import (
 
 	"github.com/emicklei/go-restful"
 	"github.com/emicklei/go-restful/swagger"
+	"github.com/nkcraddock/gooby"
 )
 
-type ServerConfig struct {
-	Addr string
-}
-
-func BuildContainer(cfg *ServerConfig) *restful.Container {
+func BuildContainer(store *gooby.Store) *restful.Container {
 	c := restful.NewContainer()
 
-	RegisterCompanies(c)
+	RegisterCompanies(c, store)
 	RegisterAuth(c, privateKey)
 	RegisterSwagger(c)
 

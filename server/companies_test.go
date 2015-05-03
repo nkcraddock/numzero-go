@@ -4,14 +4,13 @@ import (
 	"net/http"
 
 	"github.com/nkcraddock/gooby"
-	"github.com/nkcraddock/gooby/server"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("CompanyResource integration tests", func() {
-	cfg := &server.ServerConfig{}
-	server := NewServerHarness(cfg)
+	store := gooby.NewStore("Bloodhound Gang", "Gang of Four")
+	server := NewServerHarness(store)
 	server.Authenticate("username", "password")
 
 	Context("GET /companies", func() {
@@ -19,7 +18,7 @@ var _ = Describe("CompanyResource integration tests", func() {
 			companies := []gooby.Company{}
 			res := server.GET("/companies", &companies)
 			Ω(companies).ShouldNot(BeEmpty())
-			Ω(companies).Should(HaveLen(1))
+			Ω(companies).Should(HaveLen(2))
 			Ω(companies[0].Name).Should(Equal("Bloodhound Gang"))
 			Ω(res.Code).Should(Equal(http.StatusOK))
 		})

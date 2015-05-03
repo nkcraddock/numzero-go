@@ -6,14 +6,15 @@ import (
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
+	"github.com/nkcraddock/gooby"
 	"github.com/nkcraddock/gooby/server"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("AuthResource integration tests", func() {
-	cfg := &server.ServerConfig{}
-	s := NewServerHarness(cfg)
+	store := gooby.NewStore("Bloodhound Gang", "Gang of Four")
+	s := NewServerHarness(store)
 
 	Context("POST /auth/token", func() {
 		It("can authenticate a username/password", func() {

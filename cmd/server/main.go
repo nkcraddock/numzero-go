@@ -4,13 +4,15 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/nkcraddock/gooby"
 	"github.com/nkcraddock/gooby/server"
 )
 
 func main() {
-	cfg := &server.ServerConfig{Addr: ":3001"}
-	c := server.BuildContainer(cfg)
+	addr := ":3001"
+	store := gooby.NewStore()
+	c := server.BuildContainer(store)
 
-	server := &http.Server{Addr: cfg.Addr, Handler: c}
+	server := &http.Server{Addr: addr, Handler: c}
 	log.Fatal(server.ListenAndServe())
 }

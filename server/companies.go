@@ -11,8 +11,8 @@ type CompanyResource struct {
 	store *gooby.Store
 }
 
-func RegisterCompanies(c *restful.Container) *CompanyResource {
-	h := &CompanyResource{store: gooby.NewStore("Bloodhound Gang")}
+func RegisterCompanies(c *restful.Container, store *gooby.Store) *CompanyResource {
+	h := &CompanyResource{store: store}
 
 	ws := new(restful.WebService)
 
