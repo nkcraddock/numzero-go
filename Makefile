@@ -2,6 +2,8 @@ VENDOR_PATH = $(CURDIR)/_vendor
 GOPATH := $(VENDOR_PATH):$(GOPATH)
 SERVER_FILES := $(shell find cmd/server -type f -name "*.go" ! -name "*_test.go")
 
+default: vendor build
+
 run: 
 	go run $(SERVER_FILES)
 
@@ -23,7 +25,7 @@ vendor:
 clean:
 	rm -rf build/
 
-build: clean
+build: clean clientdata
 	mkdir -p build/
 	CGO_ENABLED=0 go build -a -installsuffix cgo -o build/gooby --ldflags '-s' $(SERVER_FILES)
 

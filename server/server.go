@@ -49,7 +49,8 @@ func RegisterStaticContent(container *restful.Container) {
 			res.AddHeader("Content-Type", mimetype)
 			res.Write(data)
 		} else {
-			log.Println("Not found:", filePath, gooby.AssetNames())
+			log.Println("NOT FOUND:", filePath)
+			res.AddHeader("Content-Type", "text/html")
 			res.Write(notFound)
 		}
 	}
