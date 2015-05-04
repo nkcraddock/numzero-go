@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"net/http"
 
@@ -9,12 +10,19 @@ import (
 )
 
 func main() {
+	root := getContentRoot()
 	addr := ":3001"
 	store := gooby.NewMemoryStore()
-	c := server.BuildContainer(store, privateKey, publicKey)
+	c := server.BuildContainer(store, privateKey, publicKey, root)
 
 	server := &http.Server{Addr: addr, Handler: c}
 	log.Fatal(server.ListenAndServe())
+}
+
+func getContentRoot() string {
+	root := flag.String("r", "", "the root path of the client content. blank if bindata")
+	flag.Parse()
+	return *root
 }
 
 var privateKey = []byte(`-----BEGIN RSA PRIVATE KEY-----

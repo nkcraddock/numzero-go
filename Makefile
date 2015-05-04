@@ -7,6 +7,9 @@ default: vendor build
 run: 
 	go run $(SERVER_FILES)
 
+debug:
+	go run $(SERVER_FILES) -r client/build
+
 test:
 	go test -v ./...
 

@@ -1,8 +1,6 @@
 package server
 
 import (
-	"log"
-	"mime"
 	"os"
 	"path/filepath"
 
@@ -11,13 +9,13 @@ import (
 	"github.com/nkcraddock/gooby"
 )
 
-func BuildContainer(store gooby.Store, privateKey, publicKey []byte) *restful.Container {
+func BuildContainer(store gooby.Store, privateKey, publicKey []byte, contentroot string) *restful.Container {
 	c := restful.NewContainer()
 
 	auth := RegisterAuth(c, store, privateKey, publicKey)
 	RegisterCompanies(c, store, auth)
 	RegisterSwagger(c)
-	RegisterStaticContent(c)
+	RegisterStaticContent(c, contentroot)
 
 	return c
 }
@@ -32,30 +30,4 @@ func RegisterSwagger(container *restful.Container) {
 	}
 
 	swagger.RegisterSwaggerService(config, container)
-}
-
-func RegisterStaticContent(container *restful.Container) {
-	notFound, _ := gooby.Asset("404.html")
-
-	var staticHandler = func(req *restful.Request, res *restful.Response) {
-		filePath := req.PathParameter("path")
-
-		if filePath == "" {
-			filePath = "index.html"
-		}
-
-		if data, err := gooby.Asset(filePath); err == nil {
-			mimetype := mime.TypeByExtension(filepath.Ext(filePath))
-			res.AddHeader("Content-Type", mimetype)
-			res.Write(data)
-		} else {
-			log.Println("NOT FOUND:", filePath)
-			res.AddHeader("Content-Type", "text/html")
-			res.Write(notFound)
-		}
-	}
-
-	ws := new(restful.WebService)
-	ws.Route(ws.GET("/{path:*}").To(staticHandler))
-	container.Add(ws)
 }

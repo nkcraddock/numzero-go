@@ -28,7 +28,7 @@ type ServerHarness struct {
 }
 
 func NewServerHarness(store gooby.Store) *ServerHarness {
-	c := server.BuildContainer(store, privateKey, publicKey)
+	c := server.BuildContainer(store, privateKey, publicKey, "")
 	return &ServerHarness{container: c}
 }
 
