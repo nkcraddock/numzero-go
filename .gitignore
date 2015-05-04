@@ -65,3 +65,4 @@ npm-debug.log
 
 build/
 bower_components/
+clientdata.go

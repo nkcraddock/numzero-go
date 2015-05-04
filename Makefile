@@ -3,7 +3,6 @@ GOPATH := $(VENDOR_PATH):$(GOPATH)
 SERVER_FILES := $(shell find cmd/server -type f -name "*.go" ! -name "*_test.go")
 
 run: 
-	grunt --gruntfile client/Gruntfile.js build
 	go run $(SERVER_FILES)
 
 test:
@@ -28,3 +27,7 @@ build: clean
 	mkdir -p build/
 	CGO_ENABLED=0 go build -a -installsuffix cgo -o build/gooby --ldflags '-s' $(SERVER_FILES)
 
+clientdata: 
+	go get -u github.com/jteeuwen/go-bindata/...
+	grunt --gruntfile client/Gruntfile.js build
+	go-bindata -o "./clientdata.go" -pkg="gooby" -prefix="client/build/" client/build/...

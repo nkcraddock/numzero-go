@@ -2,9 +2,8 @@ package server
 
 import (
 	"log"
-	"net/http"
+	"mime"
 	"os"
-	"path"
 	"path/filepath"
 
 	"github.com/emicklei/go-restful"
@@ -18,7 +17,7 @@ func BuildContainer(store gooby.Store, privateKey, publicKey []byte) *restful.Co
 	auth := RegisterAuth(c, store, privateKey, publicKey)
 	RegisterCompanies(c, store, auth)
 	RegisterSwagger(c)
-	RegisterStaticContent(c, "/client/build")
+	RegisterStaticContent(c)
 
 	return c
 }
@@ -35,20 +34,23 @@ func RegisterSwagger(container *restful.Container) {
 	swagger.RegisterSwaggerService(config, container)
 }
 
-func RegisterStaticContent(container *restful.Container, root string) {
-	current, _ := os.Getwd()
-	staticRoot := path.Join(current, root)
-	notFound := path.Join(staticRoot, "404.html")
-	log.Println("Client root:", staticRoot)
+func RegisterStaticContent(container *restful.Container) {
+	notFound, _ := gooby.Asset("404.html")
 
 	var staticHandler = func(req *restful.Request, res *restful.Response) {
-		fullPath := path.Join(staticRoot, req.PathParameter("path"))
-		_, err := os.Stat(fullPath)
-		found := err == nil
-		if found {
-			http.ServeFile(res.ResponseWriter, req.Request, fullPath)
+		filePath := req.PathParameter("path")
+
+		if filePath == "" {
+			filePath = "index.html"
+		}
+
+		if data, err := gooby.Asset(filePath); err == nil {
+			mimetype := mime.TypeByExtension(filepath.Ext(filePath))
+			res.AddHeader("Content-Type", mimetype)
+			res.Write(data)
 		} else {
-			http.ServeFile(res.ResponseWriter, req.Request, notFound)
+			log.Println("Not found:", filePath, gooby.AssetNames())
+			res.Write(notFound)
 		}
 	}
 

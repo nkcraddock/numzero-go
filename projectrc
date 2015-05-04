@@ -1,3 +1,5 @@
 # set ur gopath
-export GOPATH=`cd ../../../..;pwd`:$(pwd)/_vendor
+export GOPATH=`cd ../../../..;pwd`
+export PATH=$PATH:$GOPATH/bin
+export GOPATH=$GOPATH:$(pwd)/_vendor
 echo "Updated gopath"
