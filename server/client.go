@@ -17,6 +17,7 @@ type StaticContentHandler struct {
 	contentRoot string
 }
 
+// Registers the StaticContentHandler to serve up the client assets
 func RegisterStaticContent(container *restful.Container, root string) *StaticContentHandler {
 	ws := new(restful.WebService)
 	h := new(StaticContentHandler)
@@ -40,6 +41,7 @@ func RegisterStaticContent(container *restful.Container, root string) *StaticCon
 	return h
 }
 
+// serves static content from the clientdata assets
 func (h *StaticContentHandler) serveBinData(req *restful.Request, res *restful.Response) {
 	filePath := req.PathParameter("path")
 
@@ -58,6 +60,7 @@ func (h *StaticContentHandler) serveBinData(req *restful.Request, res *restful.R
 	}
 }
 
+// serves static content from the specified path
 func (h *StaticContentHandler) serveFileSystem(req *restful.Request, res *restful.Response) {
 	filePath := req.PathParameter("path")
 
