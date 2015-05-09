@@ -3,19 +3,19 @@ package server_test
 import (
 	"net/http"
 
-	"github.com/nkcraddock/gooby"
+	"github.com/nkcraddock/numzero"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("TeamResource integration tests", func() {
-	store := gooby.NewMemoryStore("Bloodhound Gang", "Gang of Four")
+	store := numzero.NewMemoryStore("Bloodhound Gang", "Gang of Four")
 	server := NewServerHarness(store)
 	server.Authenticate("username", "password")
 
 	Context("GET /teams", func() {
 		It("retrieves a list of teams", func() {
-			teams := []gooby.Team{}
+			teams := []numzero.Team{}
 			res := server.GET("/teams", &teams)
 			Ω(res.Code).Should(Equal(http.StatusOK))
 			Ω(teams).ShouldNot(BeEmpty())
@@ -26,7 +26,7 @@ var _ = Describe("TeamResource integration tests", func() {
 
 	Context("GET /teams/{id}", func() {
 		It("retrieves a single team", func() {
-			team := gooby.Team{}
+			team := numzero.Team{}
 			res := server.GET("/teams/Bloodhound Gang", &team)
 			Ω(res.Code).Should(Equal(http.StatusOK))
 			Ω(team.Name).Should(Equal("Bloodhound Gang"))
@@ -35,11 +35,11 @@ var _ = Describe("TeamResource integration tests", func() {
 
 	Context("POST /teams", func() {
 		It("adds a new team", func() {
-			team := &gooby.Team{Name: "Crips"}
+			team := &numzero.Team{Name: "Crips"}
 			res := server.POST("/teams", &team)
 			Ω(res.Code).Should(Equal(http.StatusCreated))
 
-			newTeam := new(gooby.Team)
+			newTeam := new(numzero.Team)
 			res = server.GET("/teams/Crips", &newTeam)
 			Ω(res.Code).Should(Equal(http.StatusOK))
 			Ω(newTeam.Name).Should(Equal("Crips"))
@@ -50,7 +50,7 @@ var _ = Describe("TeamResource integration tests", func() {
 
 	Context("DELETE /teams", func() {
 		It("deletes a team", func() {
-			team := gooby.Team{Name: "Crips"}
+			team := numzero.Team{Name: "Crips"}
 			res := server.POST("/teams", &team)
 
 			res = server.DELETE("/teams/Crips")

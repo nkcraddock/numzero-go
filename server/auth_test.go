@@ -6,14 +6,14 @@ import (
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/nkcraddock/gooby"
-	"github.com/nkcraddock/gooby/server"
+	"github.com/nkcraddock/numzero"
+	"github.com/nkcraddock/numzero/server"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("AuthResource integration tests", func() {
-	store := gooby.NewMemoryStore("Bloodhound Gang", "Gang of Four")
+	store := numzero.NewMemoryStore("Bloodhound Gang", "Gang of Four")
 	s := NewServerHarness(store)
 
 	Context("POST /auth/token", func() {

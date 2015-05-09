@@ -3,19 +3,19 @@ package server_test
 import (
 	"net/http"
 
-	"github.com/nkcraddock/gooby"
+	"github.com/nkcraddock/numzero"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("rawResource integration tests", func() {
-	store := gooby.NewMemoryStore("Bloodhound Gang", "Gang of Four")
+	store := numzero.NewMemoryStore("Bloodhound Gang", "Gang of Four")
 	server := NewServerHarness(store)
 	server.Authenticate("username", "password")
 
 	Context("GET /raw", func() {
 		It("retrieves a list of raw", func() {
-			raw := []gooby.RawBuildData{}
+			raw := []numzero.RawBuildData{}
 			res := server.GET("/raw", &raw)
 			Ω(res.Code).Should(Equal(http.StatusOK))
 			Ω(raw).ShouldNot(BeEmpty())
@@ -26,7 +26,7 @@ var _ = Describe("rawResource integration tests", func() {
 
 	Context("GET /raw/{id}", func() {
 		It("retrieves a single raw", func() {
-			raw := gooby.RawBuildData{}
+			raw := numzero.RawBuildData{}
 			res := server.GET("/raw/Bloodhound Gang", &raw)
 			Ω(res.Code).Should(Equal(http.StatusOK))
 			Ω(raw.Name).Should(Equal("Bloodhound Gang"))
@@ -35,11 +35,11 @@ var _ = Describe("rawResource integration tests", func() {
 
 	Context("POST /raw", func() {
 		It("adds a new raw", func() {
-			raw := &gooby.RawBuildData{Name: "Crips"}
+			raw := &numzero.RawBuildData{Name: "Crips"}
 			res := server.POST("/raw", &raw)
 			Ω(res.Code).Should(Equal(http.StatusCreated))
 
-			newraw := new(gooby.RawBuildData)
+			newraw := new(numzero.RawBuildData)
 			res = server.GET("/raw/Crips", &newraw)
 			Ω(res.Code).Should(Equal(http.StatusOK))
 			Ω(newraw.Name).Should(Equal("Crips"))
@@ -50,7 +50,7 @@ var _ = Describe("rawResource integration tests", func() {
 
 	Context("DELETE /raw", func() {
 		It("deletes a raw", func() {
-			raw := gooby.RawBuildData{Name: "Crips"}
+			raw := numzero.RawBuildData{Name: "Crips"}
 			res := server.POST("/raw", &raw)
 
 			res = server.DELETE("/raw/Crips")

@@ -30,9 +30,9 @@ clean:
 
 build: clean clientdata
 	mkdir -p build/
-	CGO_ENABLED=0 go build -a -installsuffix cgo -o build/gooby --ldflags '-s' $(SERVER_FILES)
+	CGO_ENABLED=0 go build -a -installsuffix cgo -o build/numzero --ldflags '-s' $(SERVER_FILES)
 
 clientdata: 
 	go get -u github.com/jteeuwen/go-bindata/...
 	grunt --gruntfile client/Gruntfile.js build
-	go-bindata -o "./clientdata.go" -pkg="gooby" -prefix="client/build/" client/build/...
+	go-bindata -o "./clientdata.go" -pkg="numzero" -prefix="client/build/" client/build/...

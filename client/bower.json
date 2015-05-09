@@ -1,11 +1,11 @@
 {
-  "name": "gooby-client",
+  "name": "numzero-client",
   "version": "1.0.0",
-  "homepage": "https://github.com/nkcraddock/gooby",
+  "homepage": "https://github.com/nkcraddock/numzero",
   "authors": [
     "Nathan Craddock <nkcraddock@gmail.com>"
   ],
-  "description": "gooby client",
+  "description": "numzero client",
   "license": "MIT",
   "dependencies": {
     "bootstrap": "~3.3.4",

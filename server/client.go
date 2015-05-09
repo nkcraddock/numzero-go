@@ -9,7 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/emicklei/go-restful"
-	"github.com/nkcraddock/gooby"
+	"github.com/nkcraddock/numzero"
 )
 
 // StaticContentHandler adds a default route and tries to handle any unrouted requests
@@ -27,7 +27,7 @@ func RegisterStaticContent(container *restful.Container, root string) *StaticCon
 
 	if root == "" {
 		log.Println("Hosting static content in memory")
-		notFound, _ := gooby.Asset("404.html")
+		notFound, _ := numzero.Asset("404.html")
 		h.notFound = notFound
 		ws.Route(ws.GET("/{path:*}").To(h.serveBinData))
 	} else {
@@ -52,7 +52,7 @@ func (h *StaticContentHandler) serveBinData(req *restful.Request, res *restful.R
 		filePath = "index.html"
 	}
 
-	if data, err := gooby.Asset(filePath); err == nil {
+	if data, err := numzero.Asset(filePath); err == nil {
 		mimetype := mime.TypeByExtension(filepath.Ext(filePath))
 		res.AddHeader("Content-Type", mimetype)
 		res.Write(data)

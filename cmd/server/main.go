@@ -5,14 +5,14 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/nkcraddock/gooby"
-	"github.com/nkcraddock/gooby/server"
+	"github.com/nkcraddock/numzero"
+	"github.com/nkcraddock/numzero/server"
 )
 
 func main() {
 	root := getContentRoot()
 	addr := ":3001"
-	store := gooby.NewMemoryStore()
+	store := numzero.NewMemoryStore()
 	c := server.BuildContainer(store, privateKey, publicKey, root)
 
 	server := &http.Server{Addr: addr, Handler: c}

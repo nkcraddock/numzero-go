@@ -2,10 +2,10 @@ package server
 
 import (
 	"github.com/emicklei/go-restful"
-	"github.com/nkcraddock/gooby"
+	"github.com/nkcraddock/numzero"
 )
 
-func BuildContainer(store gooby.Store, privateKey, publicKey []byte, contentroot string) *restful.Container {
+func BuildContainer(store numzero.Store, privateKey, publicKey []byte, contentroot string) *restful.Container {
 	c := restful.NewContainer()
 
 	auth := RegisterAuth(c, store, privateKey, publicKey)

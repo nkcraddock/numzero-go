@@ -4,14 +4,14 @@ import (
 	"net/http"
 
 	"github.com/emicklei/go-restful"
-	"github.com/nkcraddock/gooby"
+	"github.com/nkcraddock/numzero"
 )
 
 type TeamResource struct {
-	store gooby.Store
+	store numzero.Store
 }
 
-func RegisterTeams(c *restful.Container, store gooby.Store, auth *AuthResource) *TeamResource {
+func RegisterTeams(c *restful.Container, store numzero.Store, auth *AuthResource) *TeamResource {
 	h := &TeamResource{store: store}
 
 	ws := new(restful.WebService)
@@ -26,13 +26,13 @@ func RegisterTeams(c *restful.Container, store gooby.Store, auth *AuthResource) 
 	ws.Route(ws.GET("/").To(h.all).
 		Doc("get all teams").
 		Operation("all").
-		Writes([]gooby.Team{}))
+		Writes([]numzero.Team{}))
 
 	ws.Route(ws.GET("/{name}").To(h.get).
 		Doc("get a single team").
 		Operation("get").
 		Param(ws.PathParameter("name", "name of the team").DataType("string")).
-		Writes(gooby.Team{}))
+		Writes(numzero.Team{}))
 
 	ws.Route(ws.DELETE("/{name}").To(h.del).
 		Doc("delete a single team").
@@ -42,7 +42,7 @@ func RegisterTeams(c *restful.Container, store gooby.Store, auth *AuthResource) 
 	ws.Route(ws.POST("/").To(h.create).
 		Doc("create a new team").
 		Operation("create").
-		Reads(gooby.Team{}))
+		Reads(numzero.Team{}))
 
 	c.Add(ws)
 
@@ -55,7 +55,7 @@ func (h *TeamResource) all(req *restful.Request, res *restful.Response) {
 }
 
 func (h *TeamResource) create(req *restful.Request, res *restful.Response) {
-	c := new(gooby.Team)
+	c := new(numzero.Team)
 	req.ReadEntity(c)
 
 	h.store.SaveTeam(c)

@@ -1,5 +1,5 @@
 FROM scratch
-ADD build/gooby /gooby
+ADD build/numzero /numzero
 EXPOSE 3001
-ENTRYPOINT ["/gooby"]
+ENTRYPOINT ["/numzero"]
 

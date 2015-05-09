@@ -1,4 +1,4 @@
-package gooby
+package numzero
 
 import "github.com/dgrijalva/jwt-go"
 

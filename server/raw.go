@@ -4,14 +4,14 @@ import (
 	"net/http"
 
 	"github.com/emicklei/go-restful"
-	"github.com/nkcraddock/gooby"
+	"github.com/nkcraddock/numzero"
 )
 
 type RawResource struct {
-	store gooby.Repo
+	store numzero.Repo
 }
 
-func RegisterRaw(c *restful.Container, store gooby.Repo, auth *AuthResource) *RawResource {
+func RegisterRaw(c *restful.Container, store numzero.Repo, auth *AuthResource) *RawResource {
 	h := &RawResource{store: store}
 
 	ws := new(restful.WebService)
@@ -26,13 +26,13 @@ func RegisterRaw(c *restful.Container, store gooby.Repo, auth *AuthResource) *Ra
 	ws.Route(ws.GET("/").To(h.all).
 		Doc("get all raw").
 		Operation("all").
-		Writes([]gooby.RawBuildData{}))
+		Writes([]numzero.RawBuildData{}))
 
 	ws.Route(ws.GET("/{id}").To(h.get).
 		Doc("get a single raw").
 		Operation("get").
 		Param(ws.PathParameter("id", "id of the raw").DataType("string")).
-		Writes(gooby.RawBuildData{}))
+		Writes(numzero.RawBuildData{}))
 
 	ws.Route(ws.DELETE("/{id}").To(h.del).
 		Doc("delete a single raw").
@@ -42,7 +42,7 @@ func RegisterRaw(c *restful.Container, store gooby.Repo, auth *AuthResource) *Ra
 	ws.Route(ws.POST("/").To(h.create).
 		Doc("create a new raw").
 		Operation("create").
-		Reads(gooby.RawBuildData{}))
+		Reads(numzero.RawBuildData{}))
 
 	c.Add(ws)
 
@@ -55,7 +55,7 @@ func (h *RawResource) all(req *restful.Request, res *restful.Response) {
 }
 
 func (h *RawResource) create(req *restful.Request, res *restful.Response) {
-	c := new(gooby.RawBuildData)
+	c := new(numzero.RawBuildData)
 	req.ReadEntity(c)
 
 	h.store.Save(c)
