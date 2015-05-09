@@ -1,0 +1,6 @@
+{
+  "grant_type": "Token",
+  "username": "username",
+  "password": "password",
+  "client_id": "meh"
+}

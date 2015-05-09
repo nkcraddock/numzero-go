@@ -9,7 +9,7 @@ func BuildContainer(store gooby.Store, privateKey, publicKey []byte, contentroot
 	c := restful.NewContainer()
 
 	auth := RegisterAuth(c, store, privateKey, publicKey)
-	RegisterCompanies(c, store, auth)
+	RegisterTeams(c, store, auth)
 	RegisterStaticContent(c, contentroot)
 
 	return c

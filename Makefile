@@ -11,7 +11,7 @@ debug:
 	go run $(SERVER_FILES) -r client/build
 
 test:
-	go test -v ./...
+	go test -v -cover ./...
 
 # download deps to _vendor (and remove the git repos)
 vendor:

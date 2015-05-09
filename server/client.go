@@ -12,12 +12,15 @@ import (
 	"github.com/nkcraddock/gooby"
 )
 
+// StaticContentHandler adds a default route and tries to handle any unrouted requests
+// by serving up static content hosted either in a place in the filesystem (root)
+// if root is "" it will look for go-bindata that matches the path requested
 type StaticContentHandler struct {
 	notFound    []byte
 	contentRoot string
 }
 
-// Registers the StaticContentHandler to serve up the client assets
+// RegisterStaticContent wires up up StaticContentHandler
 func RegisterStaticContent(container *restful.Container, root string) *StaticContentHandler {
 	ws := new(restful.WebService)
 	h := new(StaticContentHandler)

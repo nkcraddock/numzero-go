@@ -3,47 +3,47 @@ package gooby
 import "github.com/dgrijalva/jwt-go"
 
 type MemoryStore struct {
-	companies map[string]Company
-	sessions  map[string]jwt.Token
+	teams    map[string]Team
+	sessions map[string]jwt.Token
 }
 
-func NewMemoryStore(companies ...string) Store {
+func NewMemoryStore(teams ...string) Store {
 	s := &MemoryStore{
-		companies: make(map[string]Company),
-		sessions:  make(map[string]jwt.Token),
+		teams:    make(map[string]Team),
+		sessions: make(map[string]jwt.Token),
 	}
-	for _, c := range companies {
-		s.companies[c] = Company{Name: c}
+	for _, c := range teams {
+		s.teams[c] = Team{Name: c}
 	}
 	return s
 }
 
-func (s *MemoryStore) GetCompanies() []Company {
-	companies := make([]Company, len(s.companies))
+func (s *MemoryStore) GetTeams() []Team {
+	teams := make([]Team, len(s.teams))
 	i := 0
-	for _, c := range s.companies {
-		companies[i] = c
+	for _, c := range s.teams {
+		teams[i] = c
 		i += 1
 	}
 
-	return companies
+	return teams
 }
 
-func (s *MemoryStore) SaveCompany(c *Company) {
-	s.companies[c.Name] = *c
+func (s *MemoryStore) SaveTeam(c *Team) {
+	s.teams[c.Name] = *c
 }
 
-func (s *MemoryStore) DeleteCompany(name string) bool {
-	if _, ok := s.companies[name]; !ok {
+func (s *MemoryStore) DeleteTeam(name string) bool {
+	if _, ok := s.teams[name]; !ok {
 		return false
 	} else {
-		delete(s.companies, name)
+		delete(s.teams, name)
 		return true
 	}
 }
 
-func (s *MemoryStore) GetCompany(name string) (c Company, ok bool) {
-	c, ok = s.companies[name]
+func (s *MemoryStore) GetTeam(name string) (c Team, ok bool) {
+	c, ok = s.teams[name]
 	return
 }
 
