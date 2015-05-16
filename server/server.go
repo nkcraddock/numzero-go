@@ -8,8 +8,7 @@ import (
 func BuildContainer(store numzero.Store, privateKey, publicKey []byte, contentroot string) *restful.Container {
 	c := restful.NewContainer()
 
-	auth := RegisterAuth(c, store, privateKey, publicKey)
-	RegisterTeams(c, store, auth)
+	RegisterAuth(c, store, privateKey, publicKey)
 	RegisterStaticContent(c, contentroot)
 
 	return c

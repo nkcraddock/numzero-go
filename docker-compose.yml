@@ -1,8 +1,0 @@
-web: 
-  build: .
-  links:
-    - db
-  ports:
-    - "80:3001"
-db:
-    image: dockerfile/mongodb

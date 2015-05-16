@@ -13,7 +13,7 @@ import (
 )
 
 var _ = Describe("AuthResource integration tests", func() {
-	store := numzero.NewMemoryStore("Bloodhound Gang", "Gang of Four")
+	store := numzero.NewMemoryStore()
 	s := NewServerHarness(store)
 
 	Context("POST /auth/token", func() {
