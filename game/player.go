@@ -1,10 +1,5 @@
 package game
 
-type Rule struct {
-	Description string
-	Points      int
-}
-
 type Player struct {
 	Name   string
 	Score  int
@@ -20,17 +15,7 @@ func NewPlayer(name string) *Player {
 }
 
 func (p *Player) AddEvent(evt Event) error {
-	// Store some shit I guess
 	p.Score += evt.Score()
 	p.Events = append(p.Events, evt)
 	return nil
-}
-
-type Event struct {
-	Rule  Rule
-	Count int
-}
-
-func (e Event) Score() int {
-	return e.Rule.Points * e.Count
 }
