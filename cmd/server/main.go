@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/nkcraddock/numzero"
+	"github.com/nkcraddock/numzero/game"
 	"github.com/nkcraddock/numzero/server"
 )
 
@@ -13,7 +14,8 @@ func main() {
 	root := getContentRoot()
 	addr := ":3001"
 	store := numzero.NewMemoryStore()
-	c := server.BuildContainer(store, privateKey, publicKey, root)
+	gstore := game.NewMemoryStore()
+	c := server.BuildContainer(store, gstore, privateKey, publicKey, root)
 
 	server := &http.Server{Addr: addr, Handler: c}
 	log.Fatal(server.ListenAndServe())

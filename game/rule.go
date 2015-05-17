@@ -1,7 +1,7 @@
 package game
 
 type Rule struct {
-	Code        string
-	Description string
-	Points      int
+	Code        string `json:"code"`
+	Description string `json:"desc"`
+	Points      int    `json:"points"`
 }

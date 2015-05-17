@@ -12,6 +12,7 @@ import (
 
 	"github.com/emicklei/go-restful"
 	"github.com/nkcraddock/numzero"
+	"github.com/nkcraddock/numzero/game"
 	"github.com/nkcraddock/numzero/server"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -27,8 +28,8 @@ type ServerHarness struct {
 	token     *string
 }
 
-func NewServerHarness(store numzero.Store) *ServerHarness {
-	c := server.BuildContainer(store, privateKey, publicKey, "")
+func NewServerHarness(store numzero.Store, gstore game.Store) *ServerHarness {
+	c := server.BuildContainer(store, gstore, privateKey, publicKey, "")
 	return &ServerHarness{container: c}
 }
 
@@ -78,6 +79,22 @@ func (s *ServerHarness) GET(uri string, data interface{}) (res *httptest.Respons
 	}
 
 	json.Unmarshal(body, &data)
+
+	return
+}
+
+func (s *ServerHarness) PUT(uri string, postdata interface{}) (res *httptest.ResponseRecorder) {
+	data, err := json.Marshal(postdata)
+	if err != nil {
+		return
+	}
+
+	req := s.request("PUT", uri, bytes.NewBuffer(data))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+	res = httptest.NewRecorder()
+
+	s.container.ServeHTTP(res, req)
 
 	return
 }

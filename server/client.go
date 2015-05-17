@@ -2,7 +2,6 @@ package server
 
 import (
 	"io/ioutil"
-	"log"
 	"mime"
 	"os"
 	"path"
@@ -26,14 +25,12 @@ func RegisterStaticContent(container *restful.Container, root string) *StaticCon
 	h := new(StaticContentHandler)
 
 	if root == "" {
-		log.Println("Hosting static content in memory")
 		notFound, _ := numzero.Asset("404.html")
 		h.notFound = notFound
 		ws.Route(ws.GET("/{path:*}").To(h.serveBinData))
 	} else {
 		cur, _ := os.Getwd()
 		h.contentRoot = path.Join(cur, root)
-		log.Println("Hosting static content at", h.contentRoot)
 		notFound, _ := ioutil.ReadFile(path.Join(h.contentRoot, "404.html"))
 		h.notFound = notFound
 		ws.Route(ws.GET("/{path:*}").To(h.serveFileSystem))
@@ -57,7 +54,6 @@ func (h *StaticContentHandler) serveBinData(req *restful.Request, res *restful.R
 		res.AddHeader("Content-Type", mimetype)
 		res.Write(data)
 	} else {
-		log.Println("NOT FOUND:", filePath)
 		res.AddHeader("Content-Type", "text/html")
 		res.Write(h.notFound)
 	}
@@ -83,7 +79,6 @@ func (h *StaticContentHandler) serveFileSystem(req *restful.Request, res *restfu
 		}
 	}
 
-	log.Println("NOT FOUND:", filePath)
 	res.AddHeader("Content-Type", "text/html")
 	res.Write(h.notFound)
 }

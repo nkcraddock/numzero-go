@@ -14,7 +14,7 @@ import (
 
 var _ = Describe("AuthResource integration tests", func() {
 	store := numzero.NewMemoryStore()
-	s := NewServerHarness(store)
+	s := NewServerHarness(store, nil)
 
 	Context("POST /auth/token", func() {
 		It("can authenticate a username/password", func() {
