@@ -8,8 +8,17 @@ import (
 
 var _ = Describe("Player", func() {
 	var dude *game.Player
-	rule_coffee := game.Rule{"coffee", "Making a new pot of coffee", 2}
-	rule_highfive := game.Rule{"highfive", "High fiving someone", -1}
+	rule_coffee := &game.Rule{"coffee", "Making a new pot of coffee", 2}
+	rule_highfive := &game.Rule{"highfive", "High fiving someone", -1}
+	event_one := &game.Event{
+		Description: "Daily Summary",
+		Url:         "",
+		Total:       3,
+		Scores: []game.Score{
+			game.Score{rule_coffee, 2},
+			game.Score{rule_highfive, 1},
+		},
+	}
 
 	BeforeEach(func() {
 		dude = game.NewPlayer("Dude")
@@ -17,15 +26,14 @@ var _ = Describe("Player", func() {
 
 	Context("AddEvent", func() {
 		It("adds points for events", func() {
-			dude.AddEvent(game.Event{rule_coffee, 2})
-			dude.AddEvent(game.Event{rule_highfive, 1})
+			dude.AddEvent(event_one)
 			Ω(dude.Score).Should(Equal(3))
 		})
 
 		It("maintains a list of added events", func() {
-			dude.AddEvent(game.Event{rule_coffee, 2})
-			dude.AddEvent(game.Event{rule_highfive, 1})
-			Ω(dude.Events).Should(HaveLen(2))
+			dude.AddEvent(event_one)
+			Ω(dude.Events).Should(HaveLen(1))
+			Ω(dude.Events[0].Scores).Should(HaveLen(2))
 		})
 	})
 
@@ -37,16 +45,14 @@ var _ = Describe("Player", func() {
 		})
 
 		It("persists a player", func() {
-			dude.AddEvent(game.Event{rule_coffee, 2})
-			dude.AddEvent(game.Event{rule_highfive, 1})
+			dude.AddEvent(event_one)
 
 			err := store.SavePlayer(dude)
 			Ω(err).ShouldNot(HaveOccurred())
 		})
 
 		It("retrieves a persisted player", func() {
-			dude.AddEvent(game.Event{rule_coffee, 2})
-			dude.AddEvent(game.Event{rule_highfive, 1})
+			dude.AddEvent(event_one)
 
 			err := store.SavePlayer(dude)
 			Ω(err).ShouldNot(HaveOccurred())
@@ -57,12 +63,12 @@ var _ = Describe("Player", func() {
 		})
 
 		It("persists a rule", func() {
-			err := store.SaveRule(rule_coffee)
+			err := store.SaveRule(*rule_coffee)
 			Ω(err).ShouldNot(HaveOccurred())
 		})
 
 		It("retrieves a persisted rule", func() {
-			err := store.SaveRule(rule_coffee)
+			err := store.SaveRule(*rule_coffee)
 			Ω(err).ShouldNot(HaveOccurred())
 
 			newRule, err := store.GetRule(rule_coffee.Code)

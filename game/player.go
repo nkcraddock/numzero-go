@@ -14,8 +14,8 @@ func NewPlayer(name string) *Player {
 	}
 }
 
-func (p *Player) AddEvent(evt Event) error {
-	p.Score += evt.Score()
-	p.Events = append(p.Events, evt)
+func (p *Player) AddEvent(evt *Event) error {
+	p.Score += evt.Total
+	p.Events = append(p.Events, *evt)
 	return nil
 }

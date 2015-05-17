@@ -1,0 +1,10 @@
+{
+  "desc": "Build #212 - Project Shmurda - Failed",
+  "url": nil or "https://teamcityserver.internalnetwork/builds/dfasj",
+  "scores": [
+    {
+      "rule": "COFFEE",
+      "count": "3",
+    }
+  ],
+}
