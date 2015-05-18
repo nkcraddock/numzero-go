@@ -2,6 +2,7 @@ package game
 
 import (
 	"errors"
+	"strings"
 	"sync"
 )
 
@@ -48,15 +49,17 @@ func (ms *memoryStore) SavePlayer(p *Player) error {
 	ms.mu.Lock()
 	defer ms.mu.Unlock()
 
-	ms.players[p.Name] = p
+	key := strings.ToLower(p.Name)
+	ms.players[key] = p
 	return nil
 }
 
-func (ms *memoryStore) GetPlayer(email string) (*Player, error) {
+func (ms *memoryStore) GetPlayer(name string) (*Player, error) {
 	ms.mu.Lock()
 	defer ms.mu.Unlock()
 
-	if p, ok := ms.players[email]; ok {
+	key := strings.ToLower(name)
+	if p, ok := ms.players[key]; ok {
 		return p, nil
 	}
 
@@ -67,7 +70,8 @@ func (ms *memoryStore) SaveRule(r Rule) error {
 	ms.mu.Lock()
 	defer ms.mu.Unlock()
 
-	ms.rules[r.Code] = r
+	key := strings.ToLower(r.Code)
+	ms.rules[key] = r
 	return nil
 }
 
@@ -75,7 +79,8 @@ func (ms *memoryStore) GetRule(code string) (Rule, error) {
 	ms.mu.Lock()
 	defer ms.mu.Unlock()
 
-	if r, ok := ms.rules[code]; ok {
+	key := strings.ToLower(code)
+	if r, ok := ms.rules[key]; ok {
 		return r, nil
 	}
 
