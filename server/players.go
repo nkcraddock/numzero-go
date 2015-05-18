@@ -1,7 +1,6 @@
 package server
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/emicklei/go-restful"
@@ -27,6 +26,11 @@ func RegisterPlayersResource(c *restful.Container, store game.Store, auth *AuthR
 		Operation("save").
 		Reads(game.Player{}))
 
+	ws.Route(ws.GET("/").To(h.list).
+		Doc("Get a list of players").
+		Operation("list").
+		Writes([]game.Player{}))
+
 	ws.Route(ws.GET("/{name}").To(h.get).
 		Doc("Get a player by name").
 		Operation("get").
@@ -48,6 +52,32 @@ func RegisterPlayersResource(c *restful.Container, store game.Store, auth *AuthR
 	c.Add(ws)
 
 	return h
+}
+
+func (h *PlayersResource) save(req *restful.Request, res *restful.Response) {
+	player := new(game.Player)
+	req.ReadEntity(player)
+
+	h.store.SavePlayer(player)
+	res.WriteHeader(http.StatusCreated)
+	res.WriteEntity(player)
+}
+
+func (h *PlayersResource) get(req *restful.Request, res *restful.Response) {
+	name := req.PathParameter("name")
+	if player, err := h.store.GetPlayer(name); err == nil {
+		res.WriteEntity(player)
+	} else {
+		res.WriteErrorString(http.StatusNotFound, http.StatusText(http.StatusNotFound))
+	}
+}
+
+func (h *PlayersResource) list(req *restful.Request, res *restful.Response) {
+	p, err := h.store.ListPlayers()
+	if err != nil {
+		res.WriteErrorString(http.StatusInternalServerError, err.Error())
+	}
+	res.WriteEntity(p)
 }
 
 func (h *PlayersResource) listActivities(req *restful.Request, res *restful.Response) {
@@ -85,24 +115,6 @@ func (h *PlayersResource) newActivity(req *restful.Request, res *restful.Respons
 	res.WriteHeader(http.StatusOK)
 }
 
-func (h *PlayersResource) save(req *restful.Request, res *restful.Response) {
-	player := new(game.Player)
-	req.ReadEntity(player)
-
-	h.store.SavePlayer(player)
-	res.WriteHeader(http.StatusCreated)
-	res.WriteEntity(player)
-}
-
-func (h *PlayersResource) get(req *restful.Request, res *restful.Response) {
-	name := req.PathParameter("name")
-	if player, err := h.store.GetPlayer(name); err == nil {
-		res.WriteEntity(player)
-	} else {
-		res.WriteErrorString(http.StatusNotFound, http.StatusText(http.StatusNotFound))
-	}
-}
-
 // eventToAct converts a game.Event to an Activity resource
 func eventToAct(evt game.Event) Activity {
 	act := Activity{
@@ -132,7 +144,6 @@ func (h *PlayersResource) actToEvent(act *Activity) (*game.Event, error) {
 		total += rule.Points * cnt
 		i += 1
 	}
-	log.Println("Processed event", total, "points")
 	evt := &game.Event{
 		Description: act.Description,
 		Url:         act.Url,

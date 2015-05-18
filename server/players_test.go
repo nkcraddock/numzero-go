@@ -23,9 +23,8 @@ var _ = Describe("players integration tests", func() {
 		s.Authenticate("username", "password")
 	})
 
-	req_chad := map[string]interface{}{
-		"Name": "Chad",
-	}
+	req_chad := map[string]interface{}{"Name": "Chad"}
+	req_roger := map[string]interface{}{"Name": "Roger"}
 
 	Context("PUT /players", func() {
 		It("adds a new player", func() {
@@ -58,6 +57,17 @@ var _ = Describe("players integration tests", func() {
 
 			Ω(res.Code).Should(Equal(http.StatusOK))
 			Ω(p.Name).Should(Equal(req_chad["Name"]))
+		})
+
+		It("gets a list of players", func() {
+			s.PUT("/players", &req_chad)
+			s.PUT("/players", &req_roger)
+
+			var players []game.Player
+
+			res := s.GET("/players", &players)
+			Ω(res.Code).Should(Equal(http.StatusOK))
+			Ω(players).Should(HaveLen(2))
 		})
 	})
 

@@ -9,6 +9,7 @@ import (
 type Store interface {
 	SavePlayer(p *Player) error
 	GetPlayer(email string) (*Player, error)
+	ListPlayers() ([]*Player, error)
 	SaveRule(r Rule) error
 	GetRule(code string) (Rule, error)
 }
@@ -26,6 +27,20 @@ type memoryStore struct {
 	mu      *sync.Mutex
 	players map[string]*Player
 	rules   map[string]Rule
+}
+
+func (ms *memoryStore) ListPlayers() ([]*Player, error) {
+	ms.mu.Lock()
+	defer ms.mu.Unlock()
+
+	players := make([]*Player, len(ms.players))
+
+	i := 0
+	for _, p := range ms.players {
+		players[i] = p
+	}
+
+	return players, nil
 }
 
 func (ms *memoryStore) SavePlayer(p *Player) error {
