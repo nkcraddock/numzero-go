@@ -68,7 +68,7 @@ module.exports = function(grunt) {
       },
       staticContent: {
         files: [{
-          src: ['*'],
+          src: ['**/*'],
           dest: cfg.build.path.root,
           cwd: 'src/static/',
           expand: true
@@ -86,8 +86,12 @@ module.exports = function(grunt) {
     },
     concat: {
       maincss: {
-        src: [ cfg.files.app.css, cfg.files.vendor.css ],
+        src: [ cfg.files.app.css ],
         dest: cfg.build.path.css + 'app.css'
+      },
+      vendorcss: {
+        src: [ cfg.files.vendor.css],
+        dest: cfg.build.path.css + 'vendor.css'
       }
     },
     browserify: {

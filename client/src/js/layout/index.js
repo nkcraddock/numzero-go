@@ -11,11 +11,11 @@
         .state('app', {
           abstract: true,
           views: {
-            navbar: {
+            'navbar': {
               templateUrl: "layout/navbar.html",
               controller: 'NavCtrl'
             },
-            footer: {
+            'footer': {
               templateUrl: "layout/footer.html"
             }
           }

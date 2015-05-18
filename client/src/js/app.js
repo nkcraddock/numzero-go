@@ -6,16 +6,19 @@
 
   var app = angular.module('app', [
     'ui.router',
+    'restangular',
     'templates-main',
     'app.home',
     'app.layout'
   ]);
 
-  app.config(function($locationProvider) {
+  app.config(function($locationProvider, RestangularProvider) {
     $locationProvider.html5Mode({
       enabled: true,
       requireBase: false
     });
+
+    RestangularProvider.setBaseUrl('/');
   });
 
   app.config(function($urlRouterProvider) {
