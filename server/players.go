@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/emicklei/go-restful"
@@ -15,8 +16,6 @@ func RegisterPlayersResource(c *restful.Container, store game.Store, auth *AuthR
 	h := &PlayersResource{store: store}
 
 	ws := new(restful.WebService)
-
-	ws.Filter(auth.AuthorizationFilter)
 
 	ws.Path("/players").
 		Doc("Manage game players").
@@ -76,44 +75,14 @@ func (h *PlayersResource) newActivity(req *restful.Request, res *restful.Respons
 	act := new(Activity)
 	req.ReadEntity(act)
 	evt, err := h.actToEvent(act)
+
+	if err != nil {
+		res.WriteErrorString(http.StatusInternalServerError, err.Error())
+	}
+
 	player.AddEvent(evt)
+	h.store.SavePlayer(player)
 	res.WriteHeader(http.StatusOK)
-}
-
-func eventToAct(evt game.Event) Activity {
-	act := Activity{
-		Description: evt.Description,
-		Url:         evt.Url,
-		Scores:      make(map[string]int),
-	}
-
-	for _, s := range evt.Scores {
-		act.Scores[s.Rule.Code] = s.Times
-	}
-
-	return act
-}
-
-func (h *PlayersResource) actToEvent(act *Activity) (*game.Event, error) {
-	scores := make([]game.Score, len(act.Scores))
-	total := 0
-	i := 0
-	for code, cnt := range act.Scores {
-		rule, err := h.store.GetRule(code)
-		if err != nil {
-			return nil, err
-		}
-		scores[i] = game.Score{&rule, cnt}
-		total += rule.Points * cnt
-		i += 1
-	}
-	evt := &game.Event{
-		Description: act.Description,
-		Url:         act.Url,
-		Scores:      scores,
-		Total:       total,
-	}
-	return evt, nil
 }
 
 func (h *PlayersResource) save(req *restful.Request, res *restful.Response) {
@@ -132,4 +101,43 @@ func (h *PlayersResource) get(req *restful.Request, res *restful.Response) {
 	} else {
 		res.WriteErrorString(http.StatusNotFound, http.StatusText(http.StatusNotFound))
 	}
+}
+
+// eventToAct converts a game.Event to an Activity resource
+func eventToAct(evt game.Event) Activity {
+	act := Activity{
+		Description: evt.Description,
+		Url:         evt.Url,
+		Scores:      make(map[string]int),
+	}
+
+	for _, s := range evt.Scores {
+		act.Scores[s.Rule.Code] = s.Times
+	}
+
+	return act
+}
+
+// actToEvent converts an Activity resource to a game.Event
+func (h *PlayersResource) actToEvent(act *Activity) (*game.Event, error) {
+	scores := make([]game.Score, len(act.Scores))
+	total := 0
+	i := 0
+	for code, cnt := range act.Scores {
+		rule, err := h.store.GetRule(code)
+		if err != nil {
+			return nil, err
+		}
+		scores[i] = game.Score{&rule, cnt}
+		total += rule.Points * cnt
+		i += 1
+	}
+	log.Println("Processed event", total, "points")
+	evt := &game.Event{
+		Description: act.Description,
+		Url:         act.Url,
+		Scores:      scores,
+		Total:       total,
+	}
+	return evt, nil
 }

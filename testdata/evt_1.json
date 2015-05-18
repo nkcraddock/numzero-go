@@ -1,0 +1,8 @@
+{
+  "desc": "Build #212 - Project Shmurda - Failed",
+  "url": "https://teamcityserver.internalnetwork/builds/dfasj",
+  "scores": {
+    "build:success": 1,
+    "test:new": 4
+  }
+}

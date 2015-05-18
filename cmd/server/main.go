@@ -15,10 +15,34 @@ func main() {
 	addr := ":3001"
 	store := numzero.NewMemoryStore()
 	gstore := game.NewMemoryStore()
+	addSomeTestData(gstore)
 	c := server.BuildContainer(store, gstore, privateKey, publicKey, root)
 
 	server := &http.Server{Addr: addr, Handler: c}
 	log.Fatal(server.ListenAndServe())
+}
+
+func addSomeTestData(store game.Store) {
+	store.SaveRule(game.Rule{
+		Code:        "build:broke",
+		Description: "broke the build",
+		Points:      -10,
+	})
+	store.SaveRule(game.Rule{
+		Code:        "build:fixed",
+		Description: "fixed the build",
+		Points:      10,
+	})
+	store.SaveRule(game.Rule{
+		Code:        "build:success",
+		Description: "a successful build",
+		Points:      1,
+	})
+	store.SaveRule(game.Rule{
+		Code:        "test:new",
+		Description: "net new tests. good job.",
+		Points:      1,
+	})
 }
 
 func getContentRoot() string {

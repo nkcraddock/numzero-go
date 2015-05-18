@@ -16,8 +16,6 @@ func RegisterRulesResource(c *restful.Container, store game.Store, auth *AuthRes
 
 	ws := new(restful.WebService)
 
-	ws.Filter(auth.AuthorizationFilter)
-
 	ws.Path("/rules").
 		Doc("Manage game rules").
 		Consumes(restful.MIME_XML, restful.MIME_JSON).

@@ -47,6 +47,21 @@ var _ = Describe("rules integration tests", func() {
 			Ω(rule.Description).Should(Equal(modified_coffee["desc"]))
 			Ω(rule.Points).Should(Equal(modified_coffee["points"]))
 		})
+
+		It("can have negative points", func() {
+			req_rule := map[string]interface{}{
+				"code":   "highfive",
+				"desc":   "high-fived someone",
+				"points": -1,
+			}
+
+			res := s.PUT("/rules", &req_rule)
+			Ω(res.Code).Should(Equal(http.StatusCreated))
+
+			rule := game.Rule{}
+			s.GET("/rules/highfive", &rule)
+			Ω(rule.Points).Should(Equal(-1))
+		})
 	})
 
 	Context("GET /rules", func() {

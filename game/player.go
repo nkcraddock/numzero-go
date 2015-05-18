@@ -3,7 +3,7 @@ package game
 type Player struct {
 	Name   string
 	Score  int
-	Events []Event
+	Events []Event `json:"-"`
 }
 
 func NewPlayer(name string) *Player {
