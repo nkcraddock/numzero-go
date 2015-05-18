@@ -43,6 +43,8 @@ func addSomeTestData(store game.Store) {
 		Description: "net new tests. good job.",
 		Points:      1,
 	})
+	store.SavePlayer(&game.Player{Name: "Roger"})
+	store.SavePlayer(&game.Player{Name: "Chad"})
 }
 
 func getContentRoot() string {

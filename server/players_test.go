@@ -62,12 +62,15 @@ var _ = Describe("players integration tests", func() {
 		It("gets a list of players", func() {
 			s.PUT("/players", &req_chad)
 			s.PUT("/players", &req_roger)
+			names := []string{"Roger", "Chad"}
 
 			var players []game.Player
 
 			res := s.GET("/players", &players)
 			Ω(res.Code).Should(Equal(http.StatusOK))
 			Ω(players).Should(HaveLen(2))
+			Ω(names).Should(ContainElement(players[0].Name))
+			Ω(names).Should(ContainElement(players[1].Name))
 		})
 	})
 

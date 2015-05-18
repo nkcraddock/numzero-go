@@ -38,6 +38,7 @@ func (ms *memoryStore) ListPlayers() ([]*Player, error) {
 	i := 0
 	for _, p := range ms.players {
 		players[i] = p
+		i += 1
 	}
 
 	return players, nil
