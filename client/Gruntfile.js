@@ -100,6 +100,21 @@ module.exports = function(grunt) {
         dest: cfg.build.path.css + 'vendor.css'
       }
     },
+    ngAnnotate: {
+      main: {
+        files: {
+          'build/js/app.js': ['build/js/app.js']
+        }
+      }
+    },
+    uglify: {
+      main: {
+        files: {
+          'build/js/app.js' : ['build/js/app.js']
+        }
+      }
+    },
+
     browserify: {
       app: {
         src: 'src/js/index.js',
@@ -115,10 +130,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-html2js');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-ng-annotate');
 
 
   grunt.registerTask('default', ['build', 'watch:build']);
   grunt.registerTask('build', ['jshint', 'clean', 'browserify', 'html2js', 'concat', 'copy']);
+  grunt.registerTask('package', ['build', 'ngAnnotate', 'uglify'])
 
 
 };

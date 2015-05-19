@@ -33,6 +33,8 @@ build: clean clientdata
 	CGO_ENABLED=0 go build -a -installsuffix cgo -o build/numzero --ldflags '-s' $(SERVER_FILES)
 
 clientdata: 
+	GOPATH=$(VENDOR_PATH)
+	mkdir -p $(VENDOR_PATH)
 	go get -u github.com/jteeuwen/go-bindata/...
-	grunt --gruntfile client/Gruntfile.js build
-	go-bindata -o "./clientdata.go" -pkg="numzero" -prefix="client/build/" client/build/...
+	grunt --gruntfile client/Gruntfile.js package
+	_vendor/bin/go-bindata -o "./clientdata.go" -pkg="numzero" -prefix="client/build/" client/build/...
