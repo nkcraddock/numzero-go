@@ -24,8 +24,14 @@ var cfg = {
         'src/node_modules/bower_components/bootstrap/dist/js/bootstrap.min.js',
         'src/node_modules/bower_components/angular/angular.min.js'
       ],
-      css: ['src/node_modules/bower_components/bootstrap/dist/css/*.min.css'],
-      fonts: ['src/node_modules/bower_components/bootstrap/dist/fonts/**']
+      css: [
+        'src/node_modules/bower_components/bootstrap/dist/css/*.min.css',
+        'src/node_modules/bower_components/fontawesome/css/*.min.css'
+      ],
+      fonts: [
+        'src/node_modules/bower_components/bootstrap/dist/fonts/**',
+        'src/node_modules/bower_components/fontawesome/fonts/**'
+      ]
     }
   }
 };

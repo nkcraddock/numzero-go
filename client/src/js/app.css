@@ -37,7 +37,7 @@ header button, section button {
 }
 
 header p, section p {
-  font-size: 2em;
+  font-size: 1.5em;
 }
 
 a.navbar-brand {
@@ -53,8 +53,46 @@ a.navbar-brand {
   color: #fff;
 }
 
+.features .row {
+  margin: 0;
+  padding-top: 3em;
+}
 
+.features p {
+  padding: 0 3em;
+  margin-top: 1em;
+  text-align: justify;
+}
 
+.icon {
+  text-align: center;
+  display: table;
+  margin: 0 auto;
+  height: 150px;
+  width: 150px;
+  font-size: 6em;
+  border-radius: 50%;
+  border: 5px solid;
+}
 
+.icon i {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+}
 
+.red {
+  color: #990000;
+  border-color: #990000;
+}
+
+.green {
+  color: #5cb85c;
+  border-color: #5cb85c;
+}
+
+.blue {
+  color: #337ab7;
+  border-color: #337ab7;
+}
 
