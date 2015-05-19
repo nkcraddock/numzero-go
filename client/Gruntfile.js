@@ -29,8 +29,7 @@ var cfg = {
         'src/node_modules/bower_components/fontawesome/css/*.min.css'
       ],
       fonts: [
-        'src/node_modules/bower_components/bootstrap/dist/fonts/**',
-        'src/node_modules/bower_components/fontawesome/fonts/**'
+        'src/node_modules/bower_components/fontawesome/fonts/*'
       ]
     }
   }
