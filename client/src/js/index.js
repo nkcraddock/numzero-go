@@ -2,9 +2,8 @@
   'use strict';
 
   // Load dependencies
-  require('jquery');
-  require('angular');
   _ = require('lodash');
+  require('angular');
   require('restangular');
 
   // Load app
