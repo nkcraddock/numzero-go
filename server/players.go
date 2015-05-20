@@ -18,8 +18,8 @@ func RegisterPlayersResource(c *restful.Container, store game.Store, auth *AuthR
 
 	ws.Path("/players").
 		Doc("Manage game players").
-		Consumes(restful.MIME_XML, restful.MIME_JSON).
-		Produces(restful.MIME_XML, restful.MIME_JSON)
+		Consumes(restful.MIME_JSON).
+		Produces(restful.MIME_JSON)
 
 	ws.Route(ws.PUT("/").To(h.save).
 		Doc("Save a player").

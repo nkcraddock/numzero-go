@@ -15,6 +15,11 @@ func NewPlayer(name string) *Player {
 }
 
 func (p *Player) AddEvent(evt *Event) error {
+
+	evt.Total = 0
+	for _, s := range evt.Scores {
+		evt.Total += s.Rule.Points * s.Times
+	}
 	p.Score += evt.Total
 	p.Events = append(p.Events, *evt)
 	return nil

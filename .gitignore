@@ -1,5 +1,9 @@
 #*********** GOOBY PLS ***********
 _vendor/
+build/
+bower_components/
+clientdata.go
+certs/
 
 
 #********** vim template********** 
@@ -63,6 +67,3 @@ results
 npm-debug.log
  
 
-build/
-bower_components/
-clientdata.go

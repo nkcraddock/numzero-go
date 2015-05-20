@@ -18,8 +18,15 @@ func main() {
 	addSomeTestData(gstore)
 	c := server.BuildContainer(store, gstore, privateKey, publicKey, root)
 
-	server := &http.Server{Addr: addr, Handler: c}
-	log.Fatal(server.ListenAndServe())
+	server := &http.Server{Addr: addr, Handler: logMiddleware(c)}
+	log.Fatal(server.ListenAndServeTLS("certs/cert.pem", "certs/key.pem"))
+}
+
+func logMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Println("REQUEST", r.Method, r.URL)
+		next.ServeHTTP(w, r)
+	})
 }
 
 func addSomeTestData(store game.Store) {
@@ -39,8 +46,8 @@ func addSomeTestData(store game.Store) {
 		Points:      1,
 	})
 	store.SaveRule(game.Rule{
-		Code:        "test:new",
-		Description: "net new tests. good job.",
+		Code:        "slack:profanity",
+		Description: "uttered a distasteful word",
 		Points:      1,
 	})
 	store.SavePlayer(&game.Player{Name: "Roger"})
