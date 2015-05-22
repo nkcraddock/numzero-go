@@ -26,6 +26,11 @@ func RegisterRulesResource(c *restful.Container, store game.Store, auth *AuthRes
 		Operation("save").
 		Reads(game.Rule{}))
 
+	ws.Route(ws.GET("/").To(h.list).
+		Doc("List all rules").
+		Operation("list").
+		Writes([]game.Rule{}))
+
 	ws.Route(ws.GET("/{code}").To(h.get).
 		Doc("Get a rule").
 		Operation("get").
@@ -53,4 +58,9 @@ func (h *RulesResource) get(req *restful.Request, res *restful.Response) {
 	} else {
 		res.WriteErrorString(http.StatusNotFound, http.StatusText(http.StatusNotFound))
 	}
+}
+
+func (h *RulesResource) list(req *restful.Request, res *restful.Response) {
+	rules := h.store.ListRules()
+	res.WriteEntity(rules)
 }

@@ -20,7 +20,6 @@ func BuildContainer(store numzero.Store, gstore game.Store, privateKey, publicKe
 	RegisterRulesResource(c, gstore, auth)
 	RegisterPlayersResource(c, gstore, auth)
 	RegisterStaticContent(c, contentroot)
-	RegisterIntegrationResource(c, gstore, auth)
 
 	return c
 }

@@ -13,6 +13,7 @@ type Store interface {
 	ListPlayers() ([]*Player, error)
 	SaveRule(r Rule) error
 	GetRule(code string) (Rule, error)
+	ListRules() []Rule
 }
 
 // NewMemoryStore stands up a super simple in-memory storage
@@ -85,4 +86,19 @@ func (ms *memoryStore) GetRule(code string) (Rule, error) {
 	}
 
 	return Rule{}, errors.New("Rule not found")
+}
+
+func (ms *memoryStore) ListRules() []Rule {
+	ms.mu.Lock()
+	defer ms.mu.Unlock()
+
+	rules := make([]Rule, len(ms.rules))
+
+	i := 0
+	for _, p := range ms.rules {
+		rules[i] = p
+		i += 1
+	}
+
+	return rules
 }
