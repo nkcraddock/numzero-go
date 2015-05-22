@@ -107,7 +107,8 @@ func (h *PlayersResource) newActivity(req *restful.Request, res *restful.Respons
 	evt, err := h.actToEvent(act)
 
 	if err != nil {
-		res.WriteErrorString(http.StatusInternalServerError, err.Error())
+		res.WriteErrorString(http.StatusBadRequest, err.Error())
+		return
 	}
 
 	player.AddEvent(evt)
