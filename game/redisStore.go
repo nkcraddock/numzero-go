@@ -2,7 +2,6 @@ package game
 
 import (
 	"encoding/json"
-	"fmt"
 	"strings"
 
 	"gopkg.in/redis.v3"
@@ -39,7 +38,7 @@ func (s *RedisStore) SavePlayer(p *Player) error {
 		return nil
 	}
 
-	err = s.conn.Set(playerKey(p.Name), string(playerJson), timeout).Err()
+	err = s.conn.HSet(keyPlayers, playerKey(p.Name), string(playerJson)).Err()
 
 	return err
 }
@@ -51,7 +50,7 @@ func (s *RedisStore) GetPlayer(name string) (*Player, error) {
 	}
 	defer s.close()
 
-	playerJson, err := s.conn.Get(playerKey(name)).Result()
+	playerJson, err := s.conn.HGet(keyPlayers, playerKey(name)).Result()
 
 	if err == redis.Nil {
 		return nil, ErrorPlayerNotFound
@@ -66,6 +65,35 @@ func (s *RedisStore) GetPlayer(name string) (*Player, error) {
 	}
 
 	return player, nil
+}
+
+// ListPlayers retrieves a list of all players
+func (s *RedisStore) ListPlayers() ([]*Player, error) {
+	if err := s.connect(); err != nil {
+		return nil, err
+	}
+	defer s.close()
+
+	results, err := s.conn.HGetAllMap(keyPlayers).Result()
+
+	if err != nil {
+		return nil, err
+	}
+
+	players := make([]*Player, len(results))
+
+	i := 0
+	for _, playerJson := range results {
+		p := new(Player)
+		if err = json.Unmarshal([]byte(playerJson), p); err != nil {
+			return nil, err
+		}
+
+		players[i] = p
+		i += 1
+	}
+
+	return players, nil
 }
 
 func (s *RedisStore) connect() error {
@@ -87,7 +115,7 @@ func (s *RedisStore) close() {
 
 func playerKey(id string) string {
 	id = strings.ToLower(id)
-	return fmt.Sprintf("player:%s", id)
+	return id
 }
 
 func (s *RedisStore) FlushDb() error {

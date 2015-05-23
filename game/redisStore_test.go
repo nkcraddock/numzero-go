@@ -9,6 +9,8 @@ import (
 
 var _ = Describe("game.redisStore integration tests", func() {
 	var store *game.RedisStore
+	chad := &game.Player{Name: "Chad"}
+	roger := &game.Player{Name: "Roger"}
 
 	BeforeEach(func() {
 		options := &redis.Options{
@@ -22,8 +24,6 @@ var _ = Describe("game.redisStore integration tests", func() {
 	})
 
 	Context("Players", func() {
-		chad := &game.Player{Name: "Chad"}
-
 		It("saves a player", func() {
 			err := store.SavePlayer(chad)
 			Ω(err).ShouldNot(HaveOccurred())
@@ -44,8 +44,17 @@ var _ = Describe("game.redisStore integration tests", func() {
 		})
 
 		It("returns an error if player doesnt exist", func() {
-			_, err := store.GetPlayer("totally made up")
+			_, err := store.GetPlayer("chad")
 			Ω(err).Should(Equal(game.ErrorPlayerNotFound))
+		})
+
+		It("retrieves a list of players", func() {
+			store.SavePlayer(chad)
+			store.SavePlayer(roger)
+
+			players, err := store.ListPlayers()
+			Ω(err).ShouldNot(HaveOccurred())
+			Ω(players).Should(HaveLen(2))
 		})
 
 	})
