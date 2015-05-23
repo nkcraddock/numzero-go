@@ -19,6 +19,10 @@ var _ = Describe("players integration tests", func() {
 		s.Authenticate("username", "password")
 	})
 
+	AfterEach(func() {
+		s.close()
+	})
+
 	req_chad := map[string]interface{}{"Name": "Chad"}
 	req_roger := map[string]interface{}{"Name": "Roger"}
 

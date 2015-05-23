@@ -36,9 +36,16 @@ func NewServerHarness() *ServerHarness {
 	if err != nil {
 		panic(err)
 	}
+	if err := store.Open(); err != nil {
+		panic(err)
+	}
 	store.FlushDb()
 	c := server.BuildContainer(authStore, store, privateKey, publicKey, "")
 	return &ServerHarness{container: c, GameStore: store, AuthStore: authStore}
+}
+
+func (s *ServerHarness) close() {
+	s.GameStore.Close()
 }
 
 func (s *ServerHarness) request(verb, uri string, data io.Reader) *http.Request {

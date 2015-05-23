@@ -39,6 +39,13 @@ func RegisterEventsResource(c *restful.Container, store game.Store, auth *AuthRe
 }
 
 func (h *EventsResource) save(req *restful.Request, res *restful.Response) {
+	if err := h.store.Open(); err != nil {
+		if handleError(err, "", http.StatusBadRequest, res) {
+			return
+		}
+	}
+	defer h.store.Close()
+
 	event := new(game.Event)
 	req.ReadEntity(event)
 
@@ -68,6 +75,12 @@ func (h *EventsResource) save(req *restful.Request, res *restful.Response) {
 }
 
 func (h *EventsResource) get(req *restful.Request, res *restful.Response) {
+	err := h.store.Open()
+	if handleError(err, "", http.StatusInternalServerError, res) {
+		return
+	}
+	defer h.store.Close()
+
 	id := req.PathParameter("id")
 	if event, err := h.store.GetEvent(id); err == nil {
 		res.WriteEntity(event)

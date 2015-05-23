@@ -19,6 +19,10 @@ var _ = Describe("game.redisStore integration tests", func() {
 		var err error
 		store, err = game.NewRedisStore("localhost:6379", "", 10)
 		Ω(err).ShouldNot(HaveOccurred())
+
+		err = store.Open()
+		Ω(err).ShouldNot(HaveOccurred())
+
 		store.FlushDb()
 
 		evt_won = &game.Event{
@@ -29,6 +33,10 @@ var _ = Describe("game.redisStore integration tests", func() {
 				game.Score{"wonthegame", 6},
 			},
 		}
+	})
+
+	AfterEach(func() {
+		store.Close()
 	})
 
 	Context("Events", func() {

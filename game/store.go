@@ -2,6 +2,9 @@ package game
 
 // Store stores game shit
 type Store interface {
+	Open() error
+	Close()
+
 	// Players
 	SavePlayer(p *Player) error
 	GetPlayer(name string) (*Player, error)

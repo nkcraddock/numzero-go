@@ -33,6 +33,11 @@ func logMiddleware(next http.Handler) http.Handler {
 }
 
 func addSomeTestData(store *game.RedisStore) {
+	if err := store.Open(); err != nil {
+		return
+	}
+	defer store.Close()
+
 	store.FlushDb()
 	store.SaveRule(&game.Rule{
 		Code:        "build:broke",

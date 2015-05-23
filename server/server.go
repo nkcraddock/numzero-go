@@ -1,6 +1,9 @@
 package server
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/emicklei/go-restful"
 	"github.com/nkcraddock/numzero"
 	"github.com/nkcraddock/numzero/game"
@@ -27,4 +30,22 @@ func BuildContainer(store numzero.Store, gstore game.Store, privateKey, publicKe
 
 type appconfig struct {
 	SlackToken string
+}
+
+func handleError(err error, msg string, status int, res *restful.Response) bool {
+	if err == nil {
+		return false
+	}
+
+	if msg == "" {
+		msg = http.StatusText(status)
+	}
+
+	res.WriteHeader(status)
+	response := map[string]interface{}{
+		"error": msg,
+	}
+	log.Println("ERROR", err)
+	res.WriteEntity(response)
+	return true
 }

@@ -22,6 +22,10 @@ var _ = Describe("rules integration tests", func() {
 		s.Authenticate("username", "password")
 	})
 
+	AfterEach(func() {
+		s.close()
+	})
+
 	Context("/rules", func() {
 		It("gets a list of rules", func() {
 			res := s.PUT("/rules", &req_coffee)

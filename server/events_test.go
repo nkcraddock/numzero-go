@@ -36,6 +36,10 @@ var _ = Describe("events integration tests", func() {
 		s.PUT("/rules", &req_rule)
 	})
 
+	AfterEach(func() {
+		s.close()
+	})
+
 	Context("POST /events", func() {
 		It("adds a new event", func() {
 			res := s.POST("/events", req_coffee)

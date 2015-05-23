@@ -49,6 +49,9 @@ func RegisterPlayersResource(c *restful.Container, store game.Store, auth *AuthR
 }
 
 func (h *PlayersResource) save(req *restful.Request, res *restful.Response) {
+	h.store.Open()
+	defer h.store.Close()
+
 	player := new(game.Player)
 	req.ReadEntity(player)
 
@@ -58,6 +61,11 @@ func (h *PlayersResource) save(req *restful.Request, res *restful.Response) {
 }
 
 func (h *PlayersResource) get(req *restful.Request, res *restful.Response) {
+	h.store.Open()
+	defer h.store.Close()
+
+	h.store.Open()
+	defer h.store.Close()
 	name := req.PathParameter("name")
 	if player, err := h.store.GetPlayer(name); err == nil {
 		res.WriteEntity(player)
@@ -67,6 +75,9 @@ func (h *PlayersResource) get(req *restful.Request, res *restful.Response) {
 }
 
 func (h *PlayersResource) list(req *restful.Request, res *restful.Response) {
+	h.store.Open()
+	defer h.store.Close()
+
 	p, err := h.store.ListPlayers()
 	if err != nil {
 		res.WriteErrorString(http.StatusInternalServerError, err.Error())
@@ -75,6 +86,9 @@ func (h *PlayersResource) list(req *restful.Request, res *restful.Response) {
 }
 
 func (h *PlayersResource) getEvents(req *restful.Request, res *restful.Response) {
+	h.store.Open()
+	defer h.store.Close()
+
 	name := req.PathParameter("name")
 	p, err := h.store.GetPlayerEvents(name, 0)
 	if err != nil {

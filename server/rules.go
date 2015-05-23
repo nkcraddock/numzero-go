@@ -43,6 +43,13 @@ func RegisterRulesResource(c *restful.Container, store game.Store, auth *AuthRes
 }
 
 func (h *RulesResource) save(req *restful.Request, res *restful.Response) {
+	if err := h.store.Open(); err != nil {
+		if handleError(err, "", http.StatusBadRequest, res) {
+			return
+		}
+	}
+	defer h.store.Close()
+
 	rule := new(game.Rule)
 	req.ReadEntity(rule)
 
@@ -52,6 +59,13 @@ func (h *RulesResource) save(req *restful.Request, res *restful.Response) {
 }
 
 func (h *RulesResource) get(req *restful.Request, res *restful.Response) {
+	if err := h.store.Open(); err != nil {
+		if handleError(err, "", http.StatusBadRequest, res) {
+			return
+		}
+	}
+	defer h.store.Close()
+
 	code := req.PathParameter("code")
 	if rule, err := h.store.GetRule(code); err == nil {
 		res.WriteEntity(rule)
@@ -61,6 +75,13 @@ func (h *RulesResource) get(req *restful.Request, res *restful.Response) {
 }
 
 func (h *RulesResource) list(req *restful.Request, res *restful.Response) {
+	if err := h.store.Open(); err != nil {
+		if handleError(err, "", http.StatusBadRequest, res) {
+			return
+		}
+	}
+	defer h.store.Close()
+
 	rules, _ := h.store.ListRules()
 	res.WriteEntity(rules)
 }

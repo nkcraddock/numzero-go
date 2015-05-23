@@ -25,10 +25,10 @@ func NewRedisStore(addr, password string, dbindex int64) (*RedisStore, error) {
 	}
 
 	// Make sure we can ping the redis server
-	if err := store.connect(); err != nil {
+	if err := store.Open(); err != nil {
 		return nil, err
 	}
-	store.close()
+	store.Close()
 
 	return store, nil
 }
@@ -55,11 +55,6 @@ func (s *RedisStore) GetEvent(id string) (*Event, error) {
 }
 
 func (s *RedisStore) GetPlayerEvents(name string, count int64) ([]*Event, error) {
-	if err := s.connect(); err != nil {
-		return nil, err
-	}
-	defer s.close()
-
 	values, err := s.conn.LRange(playerEventsKey(name), 0, count-1).Result()
 	if err != nil {
 		return nil, err
@@ -152,7 +147,11 @@ func (s *RedisStore) ListRules() ([]*Rule, error) {
 	return rules, nil
 }
 
-func (s *RedisStore) connect() error {
+func (s *RedisStore) Open() error {
+	if s.conn != nil {
+		return nil
+	}
+
 	client := redis.NewClient(s.opts)
 	if _, err := client.Ping().Result(); err != nil {
 		return err
@@ -162,19 +161,18 @@ func (s *RedisStore) connect() error {
 	return nil
 }
 
-func (s *RedisStore) close() {
+func (s *RedisStore) Close() {
 	if s.conn != nil {
 		s.conn.Close()
 		s.conn = nil
 	}
 }
 
-func (s *RedisStore) save(col, id string, data interface{}) error {
-	if err := s.connect(); err != nil {
-		return err
-	}
-	defer s.close()
+func (s *RedisStore) FlushDb() error {
+	return s.conn.FlushDb().Err()
+}
 
+func (s *RedisStore) save(col, id string, data interface{}) error {
 	jsonData, err := json.Marshal(data)
 	if err != nil {
 		return err
@@ -184,11 +182,6 @@ func (s *RedisStore) save(col, id string, data interface{}) error {
 }
 
 func (s *RedisStore) get(col, id string, data interface{}) error {
-	if err := s.connect(); err != nil {
-		return err
-	}
-	defer s.close()
-
 	jsonData, err := s.conn.HGet(col, id).Result()
 
 	if err == redis.Nil {
@@ -201,20 +194,10 @@ func (s *RedisStore) get(col, id string, data interface{}) error {
 }
 
 func (s *RedisStore) list(col string) (map[string]string, error) {
-	if err := s.connect(); err != nil {
-		return nil, err
-	}
-	defer s.close()
-
 	return s.conn.HGetAllMap(col).Result()
 }
 
 func (s *RedisStore) push(col, val string) error {
-	if err := s.connect(); err != nil {
-		return err
-	}
-	defer s.close()
-
 	return s.conn.LPush(col, val).Err()
 }
 
@@ -232,12 +215,4 @@ func eventKey(id string) string {
 
 func playerEventsKey(id string) string {
 	return fmt.Sprintf("players:%s:events", playerKey(id))
-}
-
-func (s *RedisStore) FlushDb() error {
-	if err := s.connect(); err != nil {
-		return err
-	}
-
-	return s.conn.FlushDb().Err()
 }
