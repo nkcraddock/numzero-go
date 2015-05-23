@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 
+	"code.google.com/p/go-uuid/uuid"
+
 	"gopkg.in/redis.v3"
 )
 
@@ -28,6 +30,21 @@ func NewRedisStore(addr, password string, dbindex int64) (*RedisStore, error) {
 	store.close()
 
 	return store, nil
+}
+
+func (s *RedisStore) SaveEvent(e *Event) error {
+	if e.Id == "" {
+		e.Id = uuid.New()
+	}
+	return s.save("events", eventKey(e.Id), e)
+}
+
+func (s *RedisStore) GetEvent(id string) (*Event, error) {
+	event := new(Event)
+	if err := s.get("events", eventKey(id), event); err != nil {
+		return nil, err
+	}
+	return event, nil
 }
 
 // SavePlayer will add a new player or update an existing player
@@ -167,6 +184,10 @@ func playerKey(id string) string {
 }
 
 func ruleKey(id string) string {
+	return strings.ToLower(id)
+}
+
+func eventKey(id string) string {
 	return strings.ToLower(id)
 }
 

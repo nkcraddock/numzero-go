@@ -26,11 +26,19 @@ func TestServer(t *testing.T) {
 type ServerHarness struct {
 	container *restful.Container
 	token     *string
+	GameStore game.Store
+	AuthStore numzero.Store
 }
 
-func NewServerHarness(store numzero.Store, gstore game.Store) *ServerHarness {
-	c := server.BuildContainer(store, gstore, privateKey, publicKey, "")
-	return &ServerHarness{container: c}
+func NewServerHarness() *ServerHarness {
+	authStore := numzero.NewMemoryStore()
+	store, err := game.NewRedisStore("localhost:6379", "", 10)
+	if err != nil {
+		panic(err)
+	}
+	store.FlushDb()
+	c := server.BuildContainer(authStore, store, privateKey, publicKey, "")
+	return &ServerHarness{container: c, GameStore: store, AuthStore: authStore}
 }
 
 func (s *ServerHarness) request(verb, uri string, data io.Reader) *http.Request {
@@ -66,6 +74,15 @@ func (s *ServerHarness) Authenticate(username, password string) error {
 	return nil
 }
 
+func (s *ServerHarness) Parse(res *httptest.ResponseRecorder, obj interface{}) error {
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(body, obj)
+}
+
 func (s *ServerHarness) GET(uri string, data interface{}) (res *httptest.ResponseRecorder) {
 	req := s.request("GET", uri, nil)
 	req.Header.Set("Accept", "application/json")
@@ -73,12 +90,7 @@ func (s *ServerHarness) GET(uri string, data interface{}) (res *httptest.Respons
 
 	s.container.ServeHTTP(res, req)
 
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		return
-	}
-
-	json.Unmarshal(body, &data)
+	s.Parse(res, data)
 
 	return
 }

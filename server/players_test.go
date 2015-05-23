@@ -3,7 +3,6 @@ package server_test
 import (
 	"net/http"
 
-	"github.com/nkcraddock/numzero"
 	"github.com/nkcraddock/numzero/game"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -13,14 +12,10 @@ var _ = Describe("players integration tests", func() {
 	var s *ServerHarness
 
 	BeforeEach(func() {
-		authStore := numzero.NewMemoryStore()
-		store, err := game.NewRedisStore("localhost:6379", "", 10)
-		Ω(err).ShouldNot(HaveOccurred())
-		store.FlushDb()
-		store.SaveRule(&game.Rule{"coffee", "made coffee", 1})
-		store.SaveRule(&game.Rule{"highfive", "high-fived someone", -10})
+		s = NewServerHarness()
+		s.GameStore.SaveRule(&game.Rule{"coffee", "made coffee", 1})
+		s.GameStore.SaveRule(&game.Rule{"highfive", "high-fived someone", -10})
 
-		s = NewServerHarness(authStore, store)
 		s.Authenticate("username", "password")
 	})
 

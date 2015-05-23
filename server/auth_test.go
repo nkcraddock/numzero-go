@@ -6,15 +6,13 @@ import (
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/nkcraddock/numzero"
 	"github.com/nkcraddock/numzero/server"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
 
 var _ = Describe("AuthResource integration tests", func() {
-	store := numzero.NewMemoryStore()
-	s := NewServerHarness(store, nil)
+	s := NewServerHarness()
 
 	Context("POST /auth/token", func() {
 		It("can authenticate a username/password", func() {

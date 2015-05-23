@@ -8,8 +8,10 @@ import (
 
 var _ = Describe("game.redisStore integration tests", func() {
 	var store *game.RedisStore
+	var evt_won *game.Event
 	chad := &game.Player{Name: "Chad"}
 	roger := &game.Player{Name: "Roger"}
+
 	got_powerup := &game.Rule{"powerup", "got the powerup", 5}
 	won_thegame := &game.Rule{"wonthegame", "won the game", 20}
 
@@ -18,6 +20,31 @@ var _ = Describe("game.redisStore integration tests", func() {
 		store, err = game.NewRedisStore("localhost:6379", "", 10)
 		Ω(err).ShouldNot(HaveOccurred())
 		store.FlushDb()
+
+		evt_won = &game.Event{
+			Player:      "chad",
+			Description: "played the game",
+			Scores: []game.Score{
+				game.Score{"powerup", 5},
+				game.Score{"wonthegame", 6},
+			},
+		}
+	})
+
+	Context("Events", func() {
+		It("saves an event", func() {
+			err := store.SaveEvent(evt_won)
+			Ω(err).ShouldNot(HaveOccurred())
+		})
+		It("retrieves an event", func() {
+			store.SaveEvent(evt_won)
+
+			evt, err := store.GetEvent(evt_won.Id)
+			Ω(err).ShouldNot(HaveOccurred())
+
+			Ω(evt).ShouldNot(BeNil())
+			Ω(evt.Scores).Should(HaveLen(2))
+		})
 	})
 
 	Context("Rules", func() {
