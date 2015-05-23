@@ -5,7 +5,6 @@ import (
 
 	"github.com/nkcraddock/numzero"
 	"github.com/nkcraddock/numzero/game"
-	"github.com/nkcraddock/numzero/server"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -73,38 +72,6 @@ var _ = Describe("players integration tests", func() {
 			Ω(players).Should(HaveLen(2))
 			Ω(names).Should(ContainElement(players[0].Name))
 			Ω(names).Should(ContainElement(players[1].Name))
-		})
-	})
-
-	Context("Activities", func() {
-		req_activity := map[string]interface{}{
-			"desc": "Breakroom Visit - 5/1/2015 15:15 EST",
-			"scores": map[string]int{
-				"coffee":   2,
-				"highfive": 1,
-			},
-		}
-
-		Context("POST /players/{name}/activities", func() {
-
-			It("adds an activity for a player", func() {
-				s.PUT("/players", &req_chad)
-				res := s.POST("/players/Chad/activities", req_activity)
-				Ω(res.Code).Should(Equal(http.StatusOK))
-			})
-		})
-
-		Context("GET /players/{name}/activities", func() {
-			It("Gets a list of activities for a player", func() {
-				s.PUT("/players", &req_chad)
-				s.POST("/players/Chad/activities", req_activity)
-
-				var act []server.Activity
-				res := s.GET("/players/Chad/activities", &act)
-				Ω(res.Code).Should(Equal(http.StatusOK))
-				Ω(act).Should(HaveLen(1))
-				Ω(act[0].Scores).Should(HaveLen(2))
-			})
 		})
 	})
 })

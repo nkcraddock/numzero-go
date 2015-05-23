@@ -15,7 +15,7 @@ import (
 // by serving up static content hosted either in a place in the filesystem (root)
 // if root is "" it will look for go-bindata that matches the path requested
 type StaticContentHandler struct {
-	notFound    []byte
+	index       []byte
 	contentRoot string
 }
 
@@ -25,14 +25,14 @@ func RegisterStaticContent(container *restful.Container, root string) *StaticCon
 	h := new(StaticContentHandler)
 
 	if root == "" {
-		notFound, _ := numzero.Asset("404.html")
-		h.notFound = notFound
+		index, _ := numzero.Asset("index.html")
+		h.index = index
 		ws.Route(ws.GET("/{path:*}").To(h.serveBinData))
 	} else {
 		cur, _ := os.Getwd()
 		h.contentRoot = path.Join(cur, root)
-		notFound, _ := ioutil.ReadFile(path.Join(h.contentRoot, "404.html"))
-		h.notFound = notFound
+		index, _ := ioutil.ReadFile(path.Join(h.contentRoot, "index.html"))
+		h.index = index
 		ws.Route(ws.GET("/{path:*}").To(h.serveFileSystem))
 	}
 
@@ -45,33 +45,8 @@ func RegisterStaticContent(container *restful.Container, root string) *StaticCon
 func (h *StaticContentHandler) serveBinData(req *restful.Request, res *restful.Response) {
 	filePath := req.PathParameter("path")
 
-	if filePath == "" {
-		filePath = "index.html"
-	}
-
-	if data, err := numzero.Asset(filePath); err == nil {
-		mimetype := mime.TypeByExtension(filepath.Ext(filePath))
-		res.AddHeader("Content-Type", mimetype)
-		res.Write(data)
-	} else {
-		res.AddHeader("Content-Type", "text/html")
-		res.Write(h.notFound)
-	}
-}
-
-// serves static content from the specified path
-func (h *StaticContentHandler) serveFileSystem(req *restful.Request, res *restful.Response) {
-	filePath := req.PathParameter("path")
-
-	if filePath == "" {
-		filePath = "index.html"
-	}
-
-	filePath = path.Join(h.contentRoot, filePath)
-
-	if _, err := os.Stat(filePath); err == nil {
-		data, err := ioutil.ReadFile(filePath)
-		if err == nil {
+	if filePath != "" {
+		if data, err := numzero.Asset(filePath); err == nil {
 			mimetype := mime.TypeByExtension(filepath.Ext(filePath))
 			res.AddHeader("Content-Type", mimetype)
 			res.Write(data)
@@ -80,5 +55,27 @@ func (h *StaticContentHandler) serveFileSystem(req *restful.Request, res *restfu
 	}
 
 	res.AddHeader("Content-Type", "text/html")
-	res.Write(h.notFound)
+	res.Write(h.index)
+}
+
+// serves static content from the specified path
+func (h *StaticContentHandler) serveFileSystem(req *restful.Request, res *restful.Response) {
+	filePath := req.PathParameter("path")
+
+	if filePath != "" {
+		filePath = path.Join(h.contentRoot, filePath)
+
+		if _, err := os.Stat(filePath); err == nil {
+			data, err := ioutil.ReadFile(filePath)
+			if err == nil {
+				mimetype := mime.TypeByExtension(filepath.Ext(filePath))
+				res.AddHeader("Content-Type", mimetype)
+				res.Write(data)
+				return
+			}
+		}
+	}
+
+	res.AddHeader("Content-Type", "text/html")
+	res.Write(h.index)
 }
