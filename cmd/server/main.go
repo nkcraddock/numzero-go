@@ -14,7 +14,10 @@ func main() {
 	root := getContentRoot()
 	addr := ":3001"
 	store := numzero.NewMemoryStore()
-	gstore := game.NewMemoryStore()
+	gstore, err := game.NewRedisStore("localhost:6379", "", 0)
+	if err != nil {
+		panic(err)
+	}
 	addSomeTestData(gstore)
 	c := server.BuildContainer(store, gstore, privateKey, publicKey, root)
 
@@ -29,25 +32,26 @@ func logMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func addSomeTestData(store game.Store) {
-	store.SaveRule(game.Rule{
+func addSomeTestData(store *game.RedisStore) {
+	store.FlushDb()
+	store.SaveRule(&game.Rule{
 		Code:        "build:broke",
 		Description: "broke the build",
 		Points:      -10,
 	})
-	store.SaveRule(game.Rule{
+	store.SaveRule(&game.Rule{
 		Code:        "build:fixed",
 		Description: "fixed the build",
 		Points:      10,
 	})
-	store.SaveRule(game.Rule{
+	store.SaveRule(&game.Rule{
 		Code:        "build:success",
 		Description: "a successful build",
 		Points:      1,
 	})
-	store.SaveRule(game.Rule{
-		Code:        "slack:profanity",
-		Description: "uttered a distasteful word",
+	store.SaveRule(&game.Rule{
+		Code:        "test:new",
+		Description: "added a test",
 		Points:      1,
 	})
 	store.SavePlayer(&game.Player{Name: "Roger"})

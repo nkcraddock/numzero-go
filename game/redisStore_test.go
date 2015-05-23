@@ -4,7 +4,6 @@ import (
 	"github.com/nkcraddock/numzero/game"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"gopkg.in/redis.v3"
 )
 
 var _ = Describe("game.redisStore integration tests", func() {
@@ -15,13 +14,9 @@ var _ = Describe("game.redisStore integration tests", func() {
 	won_thegame := &game.Rule{"wonthegame", "won the game", 20}
 
 	BeforeEach(func() {
-		options := &redis.Options{
-			Addr:     "localhost:6379",
-			Password: "",
-			DB:       10,
-		}
-
-		store = game.NewRedisStore(options)
+		var err error
+		store, err = game.NewRedisStore("localhost:6379", "", 10)
+		Ω(err).ShouldNot(HaveOccurred())
 		store.FlushDb()
 	})
 

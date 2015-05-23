@@ -12,12 +12,22 @@ type RedisStore struct {
 	conn *redis.Client
 }
 
-func NewRedisStore(opts *redis.Options) *RedisStore {
+func NewRedisStore(addr, password string, dbindex int64) (*RedisStore, error) {
 	store := &RedisStore{
-		opts: opts,
+		opts: &redis.Options{
+			Addr:     addr,
+			Password: password,
+			DB:       dbindex,
+		},
 	}
 
-	return store
+	// Make sure we can ping the redis server
+	if err := store.connect(); err != nil {
+		return nil, err
+	}
+	store.close()
+
+	return store, nil
 }
 
 // SavePlayer will add a new player or update an existing player

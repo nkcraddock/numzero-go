@@ -43,8 +43,8 @@ func RegisterRulesResource(c *restful.Container, store game.Store, auth *AuthRes
 }
 
 func (h *RulesResource) save(req *restful.Request, res *restful.Response) {
-	rule := game.Rule{}
-	req.ReadEntity(&rule)
+	rule := new(game.Rule)
+	req.ReadEntity(rule)
 
 	h.store.SaveRule(rule)
 	res.WriteHeader(http.StatusCreated)
@@ -61,6 +61,6 @@ func (h *RulesResource) get(req *restful.Request, res *restful.Response) {
 }
 
 func (h *RulesResource) list(req *restful.Request, res *restful.Response) {
-	rules := h.store.ListRules()
+	rules, _ := h.store.ListRules()
 	res.WriteEntity(rules)
 }

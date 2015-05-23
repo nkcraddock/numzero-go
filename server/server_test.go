@@ -23,7 +23,9 @@ var _ = Describe("server integration tests", func() {
 
 	BeforeEach(func() {
 		authStore := numzero.NewMemoryStore()
-		store := game.NewMemoryStore()
+		store, err := game.NewRedisStore("localhost:6379", "", 10)
+		Ω(err).ShouldNot(HaveOccurred())
+		store.FlushDb()
 		s = NewServerHarness(authStore, store)
 		s.Authenticate("username", "password")
 	})

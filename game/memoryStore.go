@@ -11,14 +11,14 @@ func NewMemoryStore() Store {
 	return &memoryStore{
 		mu:      new(sync.Mutex),
 		players: make(map[string]*Player),
-		rules:   make(map[string]Rule),
+		rules:   make(map[string]*Rule),
 	}
 }
 
 type memoryStore struct {
 	mu      *sync.Mutex
 	players map[string]*Player
-	rules   map[string]Rule
+	rules   map[string]*Rule
 }
 
 func (ms *memoryStore) ListPlayers() ([]*Player, error) {
@@ -57,7 +57,7 @@ func (ms *memoryStore) GetPlayer(name string) (*Player, error) {
 	return nil, errors.New("Player not found")
 }
 
-func (ms *memoryStore) SaveRule(r Rule) error {
+func (ms *memoryStore) SaveRule(r *Rule) error {
 	ms.mu.Lock()
 	defer ms.mu.Unlock()
 
@@ -66,7 +66,7 @@ func (ms *memoryStore) SaveRule(r Rule) error {
 	return nil
 }
 
-func (ms *memoryStore) GetRule(code string) (Rule, error) {
+func (ms *memoryStore) GetRule(code string) (*Rule, error) {
 	ms.mu.Lock()
 	defer ms.mu.Unlock()
 
@@ -75,14 +75,14 @@ func (ms *memoryStore) GetRule(code string) (Rule, error) {
 		return r, nil
 	}
 
-	return Rule{}, errors.New("Rule not found")
+	return nil, errors.New("Rule not found")
 }
 
-func (ms *memoryStore) ListRules() []Rule {
+func (ms *memoryStore) ListRules() ([]*Rule, error) {
 	ms.mu.Lock()
 	defer ms.mu.Unlock()
 
-	rules := make([]Rule, len(ms.rules))
+	rules := make([]*Rule, len(ms.rules))
 
 	i := 0
 	for _, p := range ms.rules {
@@ -90,5 +90,5 @@ func (ms *memoryStore) ListRules() []Rule {
 		i += 1
 	}
 
-	return rules
+	return rules, nil
 }

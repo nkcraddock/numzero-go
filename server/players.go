@@ -141,7 +141,7 @@ func (h *PlayersResource) actToEvent(act *Activity) (*game.Event, error) {
 		if err != nil {
 			return nil, err
 		}
-		scores[i] = game.Score{&rule, cnt}
+		scores[i] = game.Score{rule, cnt}
 		total += rule.Points * cnt
 		i += 1
 	}

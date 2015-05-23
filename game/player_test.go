@@ -63,12 +63,12 @@ var _ = Describe("Player", func() {
 		})
 
 		It("persists a rule", func() {
-			err := store.SaveRule(*rule_coffee)
+			err := store.SaveRule(rule_coffee)
 			Ω(err).ShouldNot(HaveOccurred())
 		})
 
 		It("retrieves a persisted rule", func() {
-			err := store.SaveRule(*rule_coffee)
+			err := store.SaveRule(rule_coffee)
 			Ω(err).ShouldNot(HaveOccurred())
 
 			newRule, err := store.GetRule(rule_coffee.Code)
