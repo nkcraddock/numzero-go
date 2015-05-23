@@ -45,6 +45,15 @@ var _ = Describe("game.redisStore integration tests", func() {
 			Ω(evt).ShouldNot(BeNil())
 			Ω(evt.Scores).Should(HaveLen(2))
 		})
+		It("adds the event id to the player's events", func() {
+			store.SaveEvent(evt_won)
+
+			evts, err := store.GetPlayerEvents("chad", 0)
+			Ω(err).ShouldNot(HaveOccurred())
+
+			Ω(evts).Should(HaveLen(1))
+			Ω(evts[0]).Should(Equal(evt_won))
+		})
 	})
 
 	Context("Rules", func() {

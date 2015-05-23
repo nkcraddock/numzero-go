@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/emicklei/go-restful"
@@ -40,6 +41,26 @@ func RegisterEventsResource(c *restful.Container, store game.Store, auth *AuthRe
 func (h *EventsResource) save(req *restful.Request, res *restful.Response) {
 	event := new(game.Event)
 	req.ReadEntity(event)
+
+	player, err := h.store.GetPlayer(event.Player)
+	if err != nil {
+		res.WriteErrorString(http.StatusBadRequest, "Player not found.")
+		return
+	}
+
+	event.Total = 0
+	for _, score := range event.Scores {
+		rule, err := h.store.GetRule(score.Rule)
+		if err != nil {
+			log.Print(score)
+			res.WriteErrorString(http.StatusBadRequest, "Invalid rule")
+			return
+		}
+		event.Total += rule.Points * score.Times
+	}
+
+	player.AddEvent(event)
+	h.store.SavePlayer(player)
 
 	h.store.SaveEvent(event)
 	res.WriteHeader(http.StatusCreated)

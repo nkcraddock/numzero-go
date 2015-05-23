@@ -37,6 +37,12 @@ func RegisterPlayersResource(c *restful.Container, store game.Store, auth *AuthR
 		Param(ws.PathParameter("name", "the player's name").DataType("string")).
 		Writes(game.Player{}))
 
+	ws.Route(ws.GET("/{name}/events").To(h.getEvents).
+		Doc("Get a list of events for the player").
+		Operation("getEvents").
+		Param(ws.PathParameter("name", "the player's name").DataType("string")).
+		Writes([]game.Event{}))
+
 	c.Add(ws)
 
 	return h
@@ -62,6 +68,15 @@ func (h *PlayersResource) get(req *restful.Request, res *restful.Response) {
 
 func (h *PlayersResource) list(req *restful.Request, res *restful.Response) {
 	p, err := h.store.ListPlayers()
+	if err != nil {
+		res.WriteErrorString(http.StatusInternalServerError, err.Error())
+	}
+	res.WriteEntity(p)
+}
+
+func (h *PlayersResource) getEvents(req *restful.Request, res *restful.Response) {
+	name := req.PathParameter("name")
+	p, err := h.store.GetPlayerEvents(name, 0)
 	if err != nil {
 		res.WriteErrorString(http.StatusInternalServerError, err.Error())
 	}

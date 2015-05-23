@@ -2,6 +2,7 @@ package game
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"code.google.com/p/go-uuid/uuid"
@@ -32,19 +33,48 @@ func NewRedisStore(addr, password string, dbindex int64) (*RedisStore, error) {
 	return store, nil
 }
 
+// SaveEvent will add a new event
 func (s *RedisStore) SaveEvent(e *Event) error {
-	if e.Id == "" {
-		e.Id = uuid.New()
+	e.Id = uuid.New()
+
+	if err := s.save("events", eventKey(e.Id), e); err != nil {
+		return err
 	}
-	return s.save("events", eventKey(e.Id), e)
+
+	indexKey := playerEventsKey(e.Player)
+	return s.push(indexKey, e.Id)
 }
 
+// GetEvent retrieves an existing event
 func (s *RedisStore) GetEvent(id string) (*Event, error) {
 	event := new(Event)
 	if err := s.get("events", eventKey(id), event); err != nil {
 		return nil, err
 	}
 	return event, nil
+}
+
+func (s *RedisStore) GetPlayerEvents(name string, count int64) ([]*Event, error) {
+	if err := s.connect(); err != nil {
+		return nil, err
+	}
+	defer s.close()
+
+	values, err := s.conn.LRange(playerEventsKey(name), 0, count-1).Result()
+	if err != nil {
+		return nil, err
+	}
+
+	events := make([]*Event, len(values))
+	for i, id := range values {
+		evt, err := s.GetEvent(id)
+		if err != nil {
+			return nil, err
+		}
+		events[i] = evt
+	}
+
+	return events, nil
 }
 
 // SavePlayer will add a new player or update an existing player
@@ -179,6 +209,15 @@ func (s *RedisStore) list(col string) (map[string]string, error) {
 	return s.conn.HGetAllMap(col).Result()
 }
 
+func (s *RedisStore) push(col, val string) error {
+	if err := s.connect(); err != nil {
+		return err
+	}
+	defer s.close()
+
+	return s.conn.LPush(col, val).Err()
+}
+
 func playerKey(id string) string {
 	return strings.ToLower(id)
 }
@@ -189,6 +228,10 @@ func ruleKey(id string) string {
 
 func eventKey(id string) string {
 	return strings.ToLower(id)
+}
+
+func playerEventsKey(id string) string {
+	return fmt.Sprintf("players:%s:events", playerKey(id))
 }
 
 func (s *RedisStore) FlushDb() error {

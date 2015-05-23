@@ -15,4 +15,5 @@ type Store interface {
 	// Events
 	SaveEvent(e *Event) error
 	GetEvent(id string) (*Event, error)
+	GetPlayerEvents(name string, count int64) ([]*Event, error)
 }
