@@ -1,7 +1,6 @@
 package server
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/emicklei/go-restful"
@@ -59,7 +58,6 @@ func (h *EventsResource) save(req *restful.Request, res *restful.Response) {
 	for _, score := range event.Scores {
 		rule, err := h.store.GetRule(score.Rule)
 		if err != nil {
-			log.Print(score)
 			res.WriteErrorString(http.StatusBadRequest, "Invalid rule")
 			return
 		}

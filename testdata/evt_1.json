@@ -2,8 +2,8 @@
   "player": "chad",
   "desc": "Build #212 - Project Shmurda - Failed",
   "url": "https://teamcityserver.internalnetwork/builds/dfasj",
-  "scores": {
-    "build:success": 1,
-    "test:new": 4
-  }
+  "scores": [
+    { "rule": "build:success", "times": 1 },
+    { "rule": "test:new", "times": 4 }
+  ]
 }
