@@ -23,6 +23,7 @@ vendor:
 	go get -d github.com/onsi/ginkgo/ginkgo
 	go get -d code.google.com/p/go-uuid/uuid
 	go get -d github.com/dgrijalva/jwt-go
+	go get -d gopkg.in/redis.v3
 	find $(VENDOR_PATH) -type d -name '.git' | xargs rm -rf
 
 clean:
