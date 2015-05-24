@@ -21,6 +21,7 @@ func NewRedisStore(addr, password string, dbindex int64) (*RedisStore, error) {
 			Addr:     addr,
 			Password: password,
 			DB:       dbindex,
+			PoolSize: 10,
 		},
 	}
 
