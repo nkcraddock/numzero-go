@@ -10,7 +10,9 @@
 
       <div class="col-xs-5 col-md-4">
         <a ui-sref="app.player(player.name)"><h2 ng-bind="player.name"></h2></a>
-        <small>murrh</small>
+        <small>Last score: 
+          <a ui-sref="app.player(player.name)">{{player.lastEvent.total}} points - {{player.lastEvent.date}}</a>
+        </small>
       </div>
 
       <div class="col-md-2 center">

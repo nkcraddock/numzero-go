@@ -2,6 +2,7 @@ package server
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/emicklei/go-restful"
 	"github.com/nkcraddock/numzero/game"
@@ -41,6 +42,7 @@ func RegisterPlayersResource(c *restful.Container, store game.Store, auth *AuthR
 		Doc("Get a list of events for the player").
 		Operation("getEvents").
 		Param(ws.PathParameter("name", "the player's name").DataType("string")).
+		Param(ws.QueryParameter("cnt", "the max number of events to return").DataType("string")).
 		Writes([]game.Event{}))
 
 	c.Add(ws)
@@ -75,14 +77,38 @@ func (h *PlayersResource) get(req *restful.Request, res *restful.Response) {
 }
 
 func (h *PlayersResource) list(req *restful.Request, res *restful.Response) {
+	const layout = "01/02/2006 3:04pm"
 	h.store.Open()
 	defer h.store.Close()
 
-	p, err := h.store.ListPlayers()
+	players, err := h.store.ListPlayers()
 	if err != nil {
 		res.WriteErrorString(http.StatusInternalServerError, err.Error())
+		return
 	}
-	res.WriteEntity(p)
+
+	model := make([]map[string]interface{}, len(players))
+
+	for i, p := range players {
+		model[i] = map[string]interface{}{
+			"name":  p.Name,
+			"score": p.Score,
+			"image": p.Image,
+		}
+
+		if events, err := h.store.GetPlayerEvents(p.Name, 1); err == nil && len(events) > 0 {
+			evt := events[0]
+			model[i]["lastEvent"] = map[string]interface{}{
+				"id":     evt.Id,
+				"desc":   evt.Description,
+				"scores": evt.Scores,
+				"date":   evt.Date.Format(layout),
+				"total":  evt.Total,
+			}
+		}
+	}
+
+	res.WriteEntity(model)
 }
 
 func (h *PlayersResource) getEvents(req *restful.Request, res *restful.Response) {
@@ -90,9 +116,13 @@ func (h *PlayersResource) getEvents(req *restful.Request, res *restful.Response)
 	defer h.store.Close()
 
 	name := req.PathParameter("name")
-	p, err := h.store.GetPlayerEvents(name, 0)
+	cnt, _ := strconv.Atoi(req.QueryParameter("cnt"))
+
+	p, err := h.store.GetPlayerEvents(name, int64(cnt))
 	if err != nil {
 		res.WriteErrorString(http.StatusInternalServerError, err.Error())
+		return
 	}
+
 	res.WriteEntity(p)
 }

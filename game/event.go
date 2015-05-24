@@ -1,5 +1,7 @@
 package game
 
+import "time"
+
 // An Event represents something that has happened
 // resulting in Scores
 type Event struct {
@@ -24,6 +26,9 @@ type Event struct {
 	// Total is the calculated total net value in points that will be awarded
 	// as a result of this event. It is the total value of all the Scores
 	Total int `json:"total"`
+
+	// Date is the date and time when this happened
+	Date time.Time `json:"date"`
 }
 
 // A Score is a scoring action in an Event where a game Rule was matched
