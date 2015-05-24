@@ -1,0 +1,27 @@
+<section class="container">
+  <h1>Leaderboard</h1>
+  <div class="leaderboard">
+    <div ng-repeat="player in players" class="leader row">
+      <div class="col-md-1 rank">
+        <a ui-sref="app.player(player.name)"><h1 ng-bind="player.rank"></h1></a>
+      </div>
+      <div class="col-md-1">
+        <a ui=sref="app.player(player.name)"><img class="player-sm" ng-src="{{player.image}}"/></a>
+      </div>
+
+      <div class="col-md-4">
+        <a ui-sref="app.player(player.name)"><h2 ng-bind="player.name"></h2></a>
+        <small>Something else maybe like social links or something</small>
+      </div>
+
+      <div class="col-md-2 center">
+        <a ui-sref="app.player(player.name)">
+          <h2 ng-bind="player.score"></h2>
+          <small>total score</small>
+        </a>
+      </div>
+
+
+    </div>
+  </div>
+</section>

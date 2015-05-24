@@ -4,12 +4,13 @@ html, body {
   font-family: Montserrat,"Helvetica Neue",Helvetica,Arial,sans-serif;
 }
 
-header {
-  height: 100%;
+a:hover {
+  text-decoration: none;
 }
 
-section {
-  padding: 2em 0;
+
+header {
+  height: 100%;
 }
 
 header, section {
@@ -18,7 +19,11 @@ header, section {
   width: 100%;
 }
 
-header>div, section>div {
+section.container {
+  margin-top: 20px;
+}
+
+header>div, section.full>div {
   display: table-cell;
   vertical-align: middle;
   text-align: center;
@@ -95,4 +100,35 @@ a.navbar-brand {
   color: #337ab7;
   border-color: #337ab7;
 }
+
+/* player avatars */
+img.player-sm {
+  width: 100%;
+}
+
+/* leaderboard */
+.leaderboard .leader {
+  display: flex;
+  align-items: center;
+  border-top: 1px solid #f0f0f0;
+  padding: 15px 0;
+}
+
+.center {
+  text-align: center;
+}
+
+.leader .rank h1 {
+  font-size: 5em;
+  text-align: center;
+}
+
+h1, h2, h3, h4, h5 {
+  margin: 0;
+}
+
+.navbar {
+  margin-bottom: 0;
+}
+
 

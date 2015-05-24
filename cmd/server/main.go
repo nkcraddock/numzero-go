@@ -18,7 +18,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	addSomeTestData(gstore)
 	c := server.BuildContainer(store, gstore, privateKey, publicKey, root)
 
 	server := &http.Server{Addr: addr, Handler: logMiddleware(c)}
@@ -30,38 +29,6 @@ func logMiddleware(next http.Handler) http.Handler {
 		log.Println("REQUEST", r.Method, r.URL)
 		next.ServeHTTP(w, r)
 	})
-}
-
-func addSomeTestData(store *game.RedisStore) {
-	if err := store.Open(); err != nil {
-		return
-	}
-	defer store.Close()
-
-	store.FlushDb()
-	return
-	store.SaveRule(&game.Rule{
-		Code:        "build:broke",
-		Description: "broke the build",
-		Points:      -10,
-	})
-	store.SaveRule(&game.Rule{
-		Code:        "build:fixed",
-		Description: "fixed the build",
-		Points:      10,
-	})
-	store.SaveRule(&game.Rule{
-		Code:        "build:success",
-		Description: "a successful build",
-		Points:      1,
-	})
-	store.SaveRule(&game.Rule{
-		Code:        "test:new",
-		Description: "added a test",
-		Points:      1,
-	})
-	store.SavePlayer(&game.Player{Name: "Roger"})
-	store.SavePlayer(&game.Player{Name: "Chad"})
 }
 
 func getContentRoot() string {

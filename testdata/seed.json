@@ -2,15 +2,15 @@
   "players": [
     { 
       "name": "Mervis",
-      "image": "http://i.imgur.com/eG1XeFYb.png"
+      "image": "https://i.imgur.com/eG1XeFYb.png"
     },
     { 
       "name": "Roger",
-      "image": "http://i.imgur.com/v63r7jut.jpg"
+      "image": "https://i.imgur.com/v63r7jut.jpg"
     },
     { 
       "name": "Chad",
-      "image": "http://i.imgur.com/FGJF8yLt.jpg"
+      "image": "https://i.imgur.com/FGJF8yLt.jpg"
     }
   ],
     "rules": [
