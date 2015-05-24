@@ -1,0 +1,55 @@
+{
+  "players": [
+  { "name": "Mervis" },
+  { "name": "Roger" },
+  { "name": "Chad" }
+  ],
+    "rules": [
+    { 
+      "code": "coffee",
+      "desc": "made coffee",
+      "points": 1
+    },
+    {
+      "code": "pun",
+      "desc": "made puns",
+      "points": 1
+    },
+    {
+      "code": "corporatesheep",
+      "desc": "made a corporatey bullshit statement",
+      "pointS": -1
+    }
+  ],
+    "events": [
+    {
+      "player": "mervis",
+      "desc": "break 1",
+      "scores": [
+      { "rule": "coffee", "times": 1 },
+      { "rule": "pun", "times": 3 }
+      ]
+    },
+    {
+      "player": "mervis",
+      "desc": "break 2",
+      "scores": [
+      { "rule": "corporatesheep", "times": 9 }
+      ]
+    },
+    {
+      "player": "chad",
+      "desc": "break 1",
+      "scores": [
+      { "rule": "coffee", "times": 1 }
+      ]
+    },
+    {
+      "player": "roger",
+      "desc": "coffee break",
+      "scores": [
+      { "rule": "coffee", "times": 177 }
+      ]
+    }
+  ]
+}

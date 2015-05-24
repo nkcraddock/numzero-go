@@ -39,6 +39,7 @@ func addSomeTestData(store *game.RedisStore) {
 	defer store.Close()
 
 	store.FlushDb()
+	return
 	store.SaveRule(&game.Rule{
 		Code:        "build:broke",
 		Description: "broke the build",
