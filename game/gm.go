@@ -8,8 +8,10 @@ func NewGameMaster(store Store) *GM {
 	return &GM{store}
 }
 
+// Adds a new event to the game.
 func (gm *GM) AddEvent(e *Event) error {
-	if _, err := gm.store.GetPlayer(e.Player); err != nil {
+	player, err := gm.store.GetPlayer(e.Player)
+	if err != nil {
 		if err == ErrorNotFound {
 			return ErrorInvalidPlayer
 		}
@@ -21,9 +23,13 @@ func (gm *GM) AddEvent(e *Event) error {
 		return err
 	}
 
+	player.Score += e.Total
+	gm.store.SavePlayer(player)
+
 	return gm.store.SaveEvent(e)
 }
 
+// Recalculates the event's total score
 func (gm *GM) ScoreEvent(e *Event) error {
 	total := 0
 	for _, score := range e.Scores {

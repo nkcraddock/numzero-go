@@ -13,9 +13,3 @@ func NewPlayer(name string) *Player {
 		Score: 0,
 	}
 }
-
-func (p *Player) AddEvent(evt *Event) error {
-	evt.Player = p.Name
-	p.Score += evt.Total
-	return nil
-}

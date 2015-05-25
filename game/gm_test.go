@@ -34,7 +34,6 @@ var _ = Describe("game.redisStore integration tests", func() {
 
 		It("persists the event", func() {
 			gm.AddEvent(data.Events["mervis-1"])
-
 			evt, err := store.GetEvent(data.Events["mervis-1"].Id)
 			Ω(err).ShouldNot(HaveOccurred())
 			Ω(evt).Should(Equal(data.Events["mervis-1"]))
@@ -51,8 +50,15 @@ var _ = Describe("game.redisStore integration tests", func() {
 			Ω(err).Should(HaveOccurred())
 			Ω(err).Should(Equal(game.ErrorInvalidRule))
 		})
-	})
 
+		It("awards points to the player", func() {
+			gm.AddEvent(data.Events["mervis-1"])
+			p, err := store.GetPlayer("mervis")
+			Ω(err).ShouldNot(HaveOccurred())
+			Ω(p.Score).Should(Equal(4))
+		})
+
+	})
 })
 
 // stores test data loaded from json files
