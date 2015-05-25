@@ -1,0 +1,14 @@
+{
+  "mervis": {
+    "name": "Mervis",
+    "image": "https://i.imgur.com/eG1XeFYb.png"
+  },
+  "roger": { 
+    "name": "Roger",
+    "image": "https://i.imgur.com/v63r7jut.jpg"
+  },
+  "chad": { 
+    "name": "Chad",
+    "image": "https://i.imgur.com/FGJF8yLt.jpg"
+  }
+}

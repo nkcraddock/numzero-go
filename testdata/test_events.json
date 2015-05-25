@@ -1,0 +1,51 @@
+{
+  "mervis-1": {
+    "player": "mervis",
+    "desc": "break",
+    "date": "2015-05-25T14:05:54-04:00",
+    "scores": [
+      { "rule": "coffee", "times": 1 },
+      { "rule": "pun", "times": 3 }
+    ]
+  },
+  "mervis-2": {
+    "player": "mervis",
+    "desc": "break",
+    "date": "2015-05-25T14:05:54-04:00",
+    "scores": [
+      { "rule": "corporatesheep", "times": 9 }
+    ]
+  },
+  "chad-1": {
+    "player": "chad",
+    "desc": "break",
+    "date": "2015-05-25T14:05:54-04:00",
+    "scores": [
+      { "rule": "coffee", "times": 1 }
+    ]
+  },
+  "chad-badrule": {
+    "player": "chad",
+    "desc": "break",
+    "date": "2015-05-25T14:05:54-04:00",
+    "scores": [
+      { "rule": "shmurda", "times": 1 }
+    ]
+  },
+  "roger-1": {
+    "player": "roger",
+    "desc": "coffee break",
+    "date": "2015-05-25T14:05:54-04:00",
+    "scores": [
+      { "rule": "coffee", "times": 177 }
+    ]
+  },
+  "stubart": {
+    "player": "Stubart",
+    "desc": "break",
+    "date": "2015-05-25T14:05:54-04:00",
+    "scores": [
+      { "rule": "coffee", "times": 177 }
+    ]
+  }
+}

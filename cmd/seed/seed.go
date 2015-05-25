@@ -34,9 +34,7 @@ func main() {
 
 	if players, ok := bags["players"]; ok {
 		for _, p := range players {
-
 			req := request("PUT", "/players", p)
-
 			if _, err := client.Do(req); err != nil {
 				log.Println("ERROR", err)
 			}

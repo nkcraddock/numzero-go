@@ -102,7 +102,7 @@ func (h *PlayersResource) list(req *restful.Request, res *restful.Response) {
 				"id":     evt.Id,
 				"desc":   evt.Description,
 				"scores": evt.Scores,
-				"date":   evt.Date.Format(layout),
+				"date":   evt.Date,
 				"total":  evt.Total,
 			}
 		}

@@ -1,8 +1,6 @@
 package game_test
 
 import (
-	"time"
-
 	"github.com/nkcraddock/numzero/game"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -34,7 +32,7 @@ var _ = Describe("game.redisStore integration tests", func() {
 				game.Score{"powerup", 5},
 				game.Score{"wonthegame", 6},
 			},
-			Date: time.Now(),
+			Date: game.NewTimestamp(),
 		}
 	})
 

@@ -1,0 +1,17 @@
+{
+  "coffee": { 
+    "code": "coffee",
+    "desc": "made coffee",
+    "points": 1
+  },
+  "pun": {
+    "code": "pun",
+    "desc": "made puns",
+    "points": 1
+  },
+  "corporatesheep": {
+    "code": "corporatesheep",
+    "desc": "made a corporatey bullshit statement",
+    "pointS": -1
+  }
+}
