@@ -11,14 +11,15 @@ import (
 )
 
 func main() {
-	root := getContentRoot()
+	cfg := getOpts()
 	addr := ":3001"
 	store := numzero.NewMemoryStore()
 	gstore, err := game.NewRedisStore("localhost:6379", "", 0)
 	if err != nil {
 		panic(err)
 	}
-	c := server.BuildContainer(store, gstore, privateKey, publicKey, root)
+
+	c := server.BuildContainer(store, gstore, cfg)
 
 	server := &http.Server{Addr: addr, Handler: logMiddleware(c)}
 	log.Fatal(server.ListenAndServeTLS("certs/cert.pem", "certs/key.pem"))
@@ -31,10 +32,20 @@ func logMiddleware(next http.Handler) http.Handler {
 	})
 }
 
-func getContentRoot() string {
+func getOpts() server.ServerConfig {
 	root := flag.String("r", "", "the root path of the client content. blank if bindata")
+	hook := flag.String("h", "", "the webhook url to post stuff to")
 	flag.Parse()
-	return *root
+	cfg := server.ServerConfig{
+		PrivateKey:  privateKey,
+		PublicKey:   publicKey,
+		ContentRoot: *root,
+		WebhookUrl:  *hook,
+	}
+
+	log.Println("Starting up with", cfg.ContentRoot, cfg.WebhookUrl)
+
+	return cfg
 }
 
 var privateKey = []byte(`-----BEGIN RSA PRIVATE KEY-----

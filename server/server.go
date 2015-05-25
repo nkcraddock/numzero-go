@@ -9,27 +9,24 @@ import (
 	"github.com/nkcraddock/numzero/game"
 )
 
-var config appconfig
-
-func BuildContainer(store numzero.Store, gstore game.Store, privateKey, publicKey []byte, contentroot string) *restful.Container {
-	config = appconfig{
-		SlackToken: "50u6HWjJmjiK0dL9ViWKXPSu",
-	}
-
+func BuildContainer(store numzero.Store, gstore game.Store, cfg ServerConfig) *restful.Container {
 	c := restful.NewContainer()
 	c.EnableContentEncoding(true)
 
-	auth := RegisterAuth(c, store, privateKey, publicKey)
+	auth := RegisterAuth(c, store, cfg.PrivateKey, cfg.PublicKey)
 	RegisterRulesResource(c, gstore, auth)
 	RegisterPlayersResource(c, gstore, auth)
-	RegisterEventsResource(c, gstore, auth)
-	RegisterStaticContent(c, contentroot)
+	RegisterEventsResource(c, gstore, auth, cfg.WebhookUrl)
+	RegisterStaticContent(c, cfg.ContentRoot)
 
 	return c
 }
 
-type appconfig struct {
-	SlackToken string
+type ServerConfig struct {
+	PrivateKey  []byte
+	PublicKey   []byte
+	ContentRoot string
+	WebhookUrl  string
 }
 
 func handleError(err error, msg string, status int, res *restful.Response) bool {

@@ -1,6 +1,10 @@
 package server
 
 import (
+	"bytes"
+	"crypto/tls"
+	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/emicklei/go-restful"
@@ -10,10 +14,11 @@ import (
 type EventsResource struct {
 	store game.Store
 	gm    *game.GM
+	hook  string
 }
 
-func RegisterEventsResource(c *restful.Container, store game.Store, auth *AuthResource) *EventsResource {
-	h := &EventsResource{store: store, gm: game.NewGameMaster(store)}
+func RegisterEventsResource(c *restful.Container, store game.Store, auth *AuthResource, hook string) *EventsResource {
+	h := &EventsResource{store: store, gm: game.NewGameMaster(store), hook: hook}
 
 	ws := new(restful.WebService)
 
@@ -49,9 +54,27 @@ func (h *EventsResource) save(req *restful.Request, res *restful.Response) {
 	event := new(game.Event)
 	req.ReadEntity(event)
 
-	if err := h.gm.AddEvent(event); err != nil {
+	result, err := h.gm.AddEvent(event)
+	if err != nil {
 		res.WriteErrorString(http.StatusBadRequest, err.Error())
 		return
+	}
+
+	if len(result.Achievements) > 0 && h.hook != "" {
+		for _, a := range result.Achievements {
+			txt := fmt.Sprintf("@%s earned an achievement: %s", result.Player, a.Name)
+
+			_, err := request("POST", h.hook, map[string]interface{}{
+				"text": txt,
+			})
+
+			if err != nil {
+				res.WriteErrorString(http.StatusBadRequest, err.Error())
+				return
+			}
+
+		}
+
 	}
 
 	res.WriteHeader(http.StatusCreated)
@@ -71,4 +94,16 @@ func (h *EventsResource) get(req *restful.Request, res *restful.Response) {
 	} else {
 		res.WriteErrorString(http.StatusNotFound, http.StatusText(http.StatusNotFound))
 	}
+}
+
+func request(verb, url string, thing interface{}) (*http.Response, error) {
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
+	pJson, _ := json.Marshal(thing)
+	req, _ := http.NewRequest(verb, url, bytes.NewBuffer(pJson))
+	req.Header.Set("content-type", "application/json")
+	return client.Do(req)
 }

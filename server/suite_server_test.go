@@ -40,7 +40,13 @@ func NewServerHarness() *ServerHarness {
 		panic(err)
 	}
 	store.FlushDb()
-	c := server.BuildContainer(authStore, store, privateKey, publicKey, "")
+	cfg := server.ServerConfig{
+		PrivateKey:  privateKey,
+		PublicKey:   publicKey,
+		ContentRoot: "",
+		WebhookUrl:  "",
+	}
+	c := server.BuildContainer(authStore, store, cfg)
 	return &ServerHarness{container: c, GameStore: store, AuthStore: authStore}
 }
 

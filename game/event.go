@@ -39,3 +39,9 @@ type Score struct {
 	// The number of times the Rule was triggered in the Event
 	Times int `json:"times"`
 }
+
+type EventResult struct {
+	Player       string
+	Points       int
+	Achievements []Achievement
+}

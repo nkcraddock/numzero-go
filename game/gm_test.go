@@ -27,7 +27,7 @@ var _ = Describe("game.redisStore integration tests", func() {
 
 	Context("AddEvent", func() {
 		It("calculates the total score of an event", func() {
-			err := gm.AddEvent(data.Events["mervis-1"])
+			_, err := gm.AddEvent(data.Events["mervis-1"])
 			Ω(err).ShouldNot(HaveOccurred())
 			Ω(data.Events["mervis-1"].Total).Should(Equal(4))
 		})
@@ -40,24 +40,35 @@ var _ = Describe("game.redisStore integration tests", func() {
 		})
 
 		It("returns an error if the player doesnt exist", func() {
-			err := gm.AddEvent(data.Events["stubart"])
+			_, err := gm.AddEvent(data.Events["stubart"])
 			Ω(err).Should(HaveOccurred())
 			Ω(err).Should(Equal(game.ErrorInvalidPlayer))
 		})
 
 		It("returns an error if any rules dont exist", func() {
-			err := gm.AddEvent(data.Events["chad-badrule"])
+			_, err := gm.AddEvent(data.Events["chad-badrule"])
 			Ω(err).Should(HaveOccurred())
 			Ω(err).Should(Equal(game.ErrorInvalidRule))
 		})
 
 		It("awards points to the player", func() {
 			gm.AddEvent(data.Events["mervis-1"])
-			p, err := store.GetPlayer("mervis")
-			Ω(err).ShouldNot(HaveOccurred())
+			p, _ := store.GetPlayer("mervis")
 			Ω(p.Score).Should(Equal(4))
 		})
 
+		It("updates player progress counters", func() {
+			gm.AddEvent(data.Events["mervis-1"])
+			p, _ := store.GetPlayer("mervis")
+			Ω(p.Progress).Should(HaveKeyWithValue("coffee", 1))
+			Ω(p.Progress).Should(HaveKeyWithValue("pun", 3))
+		})
+
+		It("grants achievements", func() {
+			gm.AddEvent(data.Events["roger-1"])
+			p, _ := store.GetPlayer("roger")
+			Ω(p.Achievements).Should(HaveKey("Too much coffee"))
+		})
 	})
 })
 
@@ -66,6 +77,7 @@ type testData struct {
 	Rules   map[string]*game.Rule
 	Players map[string]*game.Player
 	Events  map[string]*game.Event
+	//Achievements map[string]*game.Achievement
 }
 
 // loads the test data from the json files
@@ -90,6 +102,13 @@ func loadTestData() *testData {
 		Ω(err).ShouldNot(HaveOccurred())
 		return nil
 	}
+
+	//var achievements map[string]*game.Achievement
+	//data, _ = ioutil.ReadFile("../testdata/test_achievements.json")
+	//if err := json.Unmarshal(data, &achievements); err != nil {
+	//Ω(err).ShouldNot(HaveOccurred())
+	//return nil
+	//}
 
 	return &testData{rules, players, events}
 }

@@ -8,7 +8,7 @@ run:
 	go run $(SERVER_FILES)
 
 debug:
-	go run $(SERVER_FILES) -r client/build
+	go run $(SERVER_FILES) -r client/build -h $(SLACK_URL)
 
 test:
 	go test -v -cover ./...
