@@ -18,7 +18,7 @@
       requireBase: false
     });
 
-    RestangularProvider.setBaseUrl('/');
+    RestangularProvider.setBaseUrl('/api');
   });
 
   app.config(function($urlRouterProvider) {
