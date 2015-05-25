@@ -47,6 +47,7 @@
         var i = 0;
         $scope.players = _.chain(players)
           .sortBy(function(p) { return p.score * -1; })
+          .take(5)
           .map(function(p) {
             p.rank = i++;
             return p;
