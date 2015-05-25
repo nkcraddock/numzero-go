@@ -49,6 +49,11 @@
           .sortBy(function(p) { return p.score * -1; })
           .take(5)
           .map(function(p) {
+            if(p.achievements) {
+              p.achievementcount = Object.keys(p.achievements).length;
+            } else {
+              p.achievementcount = 0;
+            }
             p.rank = i++;
             return p;
           })

@@ -91,9 +91,10 @@ func (h *PlayersResource) list(req *restful.Request, res *restful.Response) {
 
 	for i, p := range players {
 		model[i] = map[string]interface{}{
-			"name":  p.Name,
-			"score": p.Score,
-			"image": p.Image,
+			"name":         p.Name,
+			"score":        p.Score,
+			"image":        p.Image,
+			"achievements": p.Achievements,
 		}
 
 		if events, err := h.store.GetPlayerEvents(p.Name, 1); err == nil && len(events) > 0 {

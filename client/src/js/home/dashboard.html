@@ -1,8 +1,11 @@
 <section class="container">
   <div class="leaderboard">
     <div ng-repeat="player in players" class="leader row">
-      <div class="col-xs-2 col-md-2 rank">
-        <a ui-sref="app.player(player.name)"><h1 ng-bind="player.rank"></h1></a>
+      <div class="col-xs-2 col-md-2 rank center">
+        <a ui-sref="app.player(player.name)">
+          <h1 ng-bind="player.rank"></h1>
+          <small>rank</small>
+        </a>
       </div>
       <div class="col-xs-3 col-md-1">
         <a ui=sref="app.player(player.name)"><img class="player-sm" ng-src="{{player.image}}"/></a>
@@ -19,6 +22,13 @@
         <a ui-sref="app.player(player.name)">
           <h2 ng-bind="player.score"></h2>
           <small>score</small>
+        </a>
+      </div>
+
+      <div class="col-md-2 center">
+        <a ui-sref="app.player(player.name)">
+          <h2 ng-bind="player.achievementcount"></h2>
+          <small>achievements</small>
         </a>
       </div>
 
