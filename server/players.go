@@ -12,12 +12,12 @@ type PlayersResource struct {
 	store game.Store
 }
 
-func RegisterPlayersResource(c *restful.Container, store game.Store, auth *AuthResource) *PlayersResource {
+func RegisterPlayersResource(rootPath string, c *restful.Container, store game.Store, auth *AuthResource) *PlayersResource {
 	h := &PlayersResource{store: store}
 
 	ws := new(restful.WebService)
 
-	ws.Path("/players").
+	ws.Path(rootPath + "/players").
 		Doc("Manage game players").
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)

@@ -11,12 +11,12 @@ type RulesResource struct {
 	store game.Store
 }
 
-func RegisterRulesResource(c *restful.Container, store game.Store, auth *AuthResource) *RulesResource {
+func RegisterRulesResource(rootPath string, c *restful.Container, store game.Store, auth *AuthResource) *RulesResource {
 	h := &RulesResource{store: store}
 
 	ws := new(restful.WebService)
 
-	ws.Path("/rules").
+	ws.Path(rootPath + "/rules").
 		Doc("Manage game rules").
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)

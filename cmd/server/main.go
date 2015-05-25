@@ -41,6 +41,7 @@ func getOpts() server.ServerConfig {
 		PublicKey:   publicKey,
 		ContentRoot: *root,
 		WebhookUrl:  *hook,
+		RootApiPath: "/api",
 	}
 
 	log.Println("Starting up with", cfg.ContentRoot, cfg.WebhookUrl)

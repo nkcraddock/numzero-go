@@ -22,7 +22,7 @@ var _ = Describe("AuthResource integration tests", func() {
 				Password:  "password",
 				ClientId:  "client_id",
 			}
-			res := s.POST("/auth/token", &req)
+			res := s.post("/auth/token", &req)
 			Ω(res.Code).Should(Equal(http.StatusFound))
 		})
 		It("wont authenticate a bad username/password", func() {
@@ -32,7 +32,7 @@ var _ = Describe("AuthResource integration tests", func() {
 				Password:  "nottheirrealpassword",
 				ClientId:  "client_id",
 			}
-			res := s.POST("/auth/token", &req)
+			res := s.post("/auth/token", &req)
 			Ω(res.Code).Should(Equal(http.StatusBadRequest))
 		})
 		It("returns a valid JWT", func() {
@@ -42,7 +42,7 @@ var _ = Describe("AuthResource integration tests", func() {
 				Password:  "password",
 				ClientId:  "client_id",
 			}
-			res := s.POST("/auth/token", &req)
+			res := s.post("/auth/token", &req)
 			Ω(res.Code).Should(Equal(http.StatusFound))
 
 			tokenResponse := new(server.TokenResponse)

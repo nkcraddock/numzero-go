@@ -24,10 +24,11 @@ func TestServer(t *testing.T) {
 }
 
 type ServerHarness struct {
-	container *restful.Container
-	token     *string
-	GameStore game.Store
-	AuthStore numzero.Store
+	serverConfig server.ServerConfig
+	container    *restful.Container
+	token        *string
+	GameStore    game.Store
+	AuthStore    numzero.Store
 }
 
 func NewServerHarness() *ServerHarness {
@@ -45,9 +46,10 @@ func NewServerHarness() *ServerHarness {
 		PublicKey:   publicKey,
 		ContentRoot: "",
 		WebhookUrl:  "",
+		RootApiPath: "/url",
 	}
 	c := server.BuildContainer(authStore, store, cfg)
-	return &ServerHarness{container: c, GameStore: store, AuthStore: authStore}
+	return &ServerHarness{container: c, GameStore: store, AuthStore: authStore, serverConfig: cfg}
 }
 
 func (s *ServerHarness) close() {
@@ -71,7 +73,7 @@ func (s *ServerHarness) Authenticate(username, password string) error {
 		Password:  "password",
 		ClientId:  "client_id",
 	}
-	res := s.POST("/auth/token", &req)
+	res := s.post("/auth/token", &req)
 
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
@@ -97,7 +99,7 @@ func (s *ServerHarness) Parse(res *httptest.ResponseRecorder, obj interface{}) e
 }
 
 func (s *ServerHarness) GET(uri string, data interface{}) (res *httptest.ResponseRecorder) {
-	req := s.request("GET", uri, nil)
+	req := s.request("GET", s.serverConfig.RootApiPath+uri, nil)
 	req.Header.Set("Accept", "application/json")
 	res = httptest.NewRecorder()
 
@@ -114,7 +116,7 @@ func (s *ServerHarness) PUT(uri string, postdata interface{}) (res *httptest.Res
 		return
 	}
 
-	req := s.request("PUT", uri, bytes.NewBuffer(data))
+	req := s.request("PUT", s.serverConfig.RootApiPath+uri, bytes.NewBuffer(data))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
 	res = httptest.NewRecorder()
@@ -125,6 +127,10 @@ func (s *ServerHarness) PUT(uri string, postdata interface{}) (res *httptest.Res
 }
 
 func (s *ServerHarness) POST(uri string, postdata interface{}) (res *httptest.ResponseRecorder) {
+	return s.post(s.serverConfig.RootApiPath+uri, postdata)
+}
+
+func (s *ServerHarness) post(uri string, postdata interface{}) (res *httptest.ResponseRecorder) {
 	data, err := json.Marshal(postdata)
 	if err != nil {
 		return

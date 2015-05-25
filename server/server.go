@@ -14,9 +14,9 @@ func BuildContainer(store numzero.Store, gstore game.Store, cfg ServerConfig) *r
 	c.EnableContentEncoding(true)
 
 	auth := RegisterAuth(c, store, cfg.PrivateKey, cfg.PublicKey)
-	RegisterRulesResource(c, gstore, auth)
-	RegisterPlayersResource(c, gstore, auth)
-	RegisterEventsResource(c, gstore, auth, cfg.WebhookUrl)
+	RegisterRulesResource(cfg.RootApiPath, c, gstore, auth)
+	RegisterPlayersResource(cfg.RootApiPath, c, gstore, auth)
+	RegisterEventsResource(cfg.RootApiPath, c, gstore, auth, cfg.WebhookUrl)
 	RegisterStaticContent(c, cfg.ContentRoot)
 
 	return c
@@ -27,6 +27,7 @@ type ServerConfig struct {
 	PublicKey   []byte
 	ContentRoot string
 	WebhookUrl  string
+	RootApiPath string
 }
 
 func handleError(err error, msg string, status int, res *restful.Response) bool {

@@ -17,12 +17,12 @@ type EventsResource struct {
 	hook  string
 }
 
-func RegisterEventsResource(c *restful.Container, store game.Store, auth *AuthResource, hook string) *EventsResource {
+func RegisterEventsResource(rootPath string, c *restful.Container, store game.Store, auth *AuthResource, hook string) *EventsResource {
 	h := &EventsResource{store: store, gm: game.NewGameMaster(store), hook: hook}
 
 	ws := new(restful.WebService)
 
-	ws.Path("/events").
+	ws.Path(rootPath + "/events").
 		Doc("Manage game events").
 		Consumes(restful.MIME_JSON).
 		Produces(restful.MIME_JSON)
