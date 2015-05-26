@@ -9,7 +9,8 @@
     'restangular',
     'templates-main',
     'app.home',
-    'app.layout'
+    'app.layout',
+    'app.player'
   ]);
 
   app.config(function($locationProvider, RestangularProvider) {

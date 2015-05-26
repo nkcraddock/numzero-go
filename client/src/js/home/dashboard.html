@@ -2,31 +2,31 @@
   <div class="leaderboard">
     <div ng-repeat="player in players" class="leader row">
       <div class="col-xs-2 col-md-2 rank center">
-        <a ui-sref="app.player(player.name)">
+        <a ui-sref="app.player({name: player.name})">
           <h1 ng-bind="player.rank"></h1>
           <small>rank</small>
         </a>
       </div>
       <div class="col-xs-3 col-md-1">
-        <a ui=sref="app.player(player.name)"><img class="player-sm" ng-src="{{player.image}}"/></a>
+        <a ui-sref="app.player({name: player.name})"><img class="player-sm" ng-src="{{player.image}}"/></a>
       </div>
 
       <div class="col-xs-5 col-md-4">
-        <a ui-sref="app.player(player.name)"><h2 ng-bind="player.name"></h2></a>
+        <a ui-sref="app.player({name: player.name})"><h2 ng-bind="player.name"></h2></a>
         <small>Last score: 
-          <a ui-sref="app.player(player.name)">{{player.lastEvent.total}}pt - {{player.lastEvent.date  | date:'MM/dd/yyyy @ h:mma'}}</a>
+          <a ui-sref="app.player({name: player.name})">{{player.lastEvent.total}}pt - {{player.lastEvent.date  | date:'MM/dd/yyyy @ h:mma'}}</a>
         </small>
       </div>
 
       <div class="col-md-2 center">
-        <a ui-sref="app.player(player.name)">
+        <a ui-sref="app.player({name: player.name})">
           <h2 ng-bind="player.score"></h2>
           <small>score</small>
         </a>
       </div>
 
       <div class="col-md-2 center">
-        <a ui-sref="app.player(player.name)">
+        <a ui-sref="app.player({name: player.name})">
           <h2 ng-bind="player.achievementcount"></h2>
           <small>achievements</small>
         </a>

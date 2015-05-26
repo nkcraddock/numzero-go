@@ -17,15 +17,6 @@
             }
           }
         })
-        .state('app.player', {
-          url: '/',
-          views: {
-            '@': {
-              templateUrl: "home/home.html",
-              controller: 'HomeCtrl'
-            }
-          }
-        })
         .state('app.dashboard', {
           url: '/leaders',
           views: {

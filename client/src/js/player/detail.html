@@ -1,0 +1,25 @@
+
+<section class="container">
+    <div class="col-md-2 center">
+      <img class="player-sm" ng-src="{{player.image}}"/>
+    </div>
+    <div class="col-md-2 col-md-offset-1">
+      <div>
+        <h1>{{player.name}}</h1>
+      </div>
+      <div class="center">
+        <h2 ng-bind="player.score"></h2>
+        <small>points</h2>
+      </div>
+      <div class="center">
+        <h2 ng-bind="player.achievementcount"></h2>
+        <small>achievements</h2>
+      </div>
+    </div>
+</section>
+<section class="container">
+  <h1>Achievements</h1>
+  <div class="achievement" ng-repeat="a in achievements">
+    <h3>{{a.name}} - {{a.date | date:'MM/dd/yyyy @ h:mma'}}</h3>
+  </div>
+</section>
