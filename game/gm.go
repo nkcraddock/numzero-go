@@ -16,30 +16,37 @@ func NewGameMaster(store Store) *GM {
 		},
 		Achievement{
 			Name:        "Run your mouth",
-			Description: "talked a little shit",
+			Description: "Talking shit about people",
 			Triggers: map[string]int{
-				"shittalking": 25,
+				"shittalking": 5,
 			},
 		},
 		Achievement{
-			Name:        "Talkin that shit",
-			Description: "talked a whole lot of shit",
+			Name:        "Talking shit",
+			Description: "Talking way too much shit about people",
 			Triggers: map[string]int{
-				"shittalking": 100,
+				"shittalking": 10,
 			},
 		},
 		Achievement{
 			Name:        "Memey Memerson",
-			Description: "https://www.youtube.com/watch?v=ww2e51X_2kw",
+			Description: "How original",
 			Triggers: map[string]int{
-				"memes": 20,
+				"memes": 10,
 			},
 		},
 		Achievement{
 			Name:        "Oh look who was on the geology dev team",
-			Description: "MEEEEEEEEMES",
+			Description: "We get it. You know the sayings.",
 			Triggers: map[string]int{
 				"memes": 50,
+			},
+		},
+		Achievement{
+			Name:        "Getting in on the bullshit",
+			Description: "It's high time you got in on this bullshit",
+			Triggers: map[string]int{
+				"memes": 1,
 			},
 		},
 	}

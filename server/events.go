@@ -62,7 +62,7 @@ func (h *EventsResource) save(req *restful.Request, res *restful.Response) {
 
 	if len(result.Achievements) > 0 && h.hook != "" {
 		for _, a := range result.Achievements {
-			txt := fmt.Sprintf("@%s earned an achievement: %s", result.Player, a.Name)
+			txt := fmt.Sprintf("@%s earned an achievement: %s - %s", result.Player, a.Name, a.Description)
 
 			_, err := request("POST", h.hook, map[string]interface{}{
 				"text": txt,
